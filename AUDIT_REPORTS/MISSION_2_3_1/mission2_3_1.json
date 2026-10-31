@@ -1,0 +1,116 @@
+{
+  "mission": "M2.3.1",
+  "title": "Final Evidence Consolidation & Hardware Validation Closure",
+  "date": "2026-10-31T04:55:00Z",
+  "app": {
+    "id": "com.lennylxx.iptv",
+    "version": "1.17.0",
+    "serviceId": "com.lennylxx.iptv.service"
+  },
+  "device": {
+    "model": "65UM7400PDA",
+    "sdkVersion": "4.10.0",
+    "firmwareVersion": "05.40.97",
+    "boardType": "K5LP_DVB_EU",
+    "otaId": "HE_DTV_W19P_AFADABAA",
+    "soc": "Realtek RTD2870 (Rockhopper)",
+    "arch": "ARMv7 32-bit",
+    "kernel": "Linux 4.4.84",
+    "webEngine": "Chromium 53.0.2785.34 (WebAppMgr)",
+    "serviceRuntime": "Node.js 0.12.2"
+  },
+  "packages": {
+    "candidate": {
+      "path": "AUDIT_REPORTS/MISSION_2_2_1_2/package/com.lennylxx.iptv_1.17.0_all.ipk",
+      "size": 734610,
+      "sha256": "9B4B02B69C7E70A0EE1BEE15B4F27583872C6F5D3D5B33707CD339F4F53FA531",
+      "status": "INSTALLED"
+    },
+    "rollback_m2": {
+      "path": "AUDIT_REPORTS/MISSION_2/package/com.lennylxx.iptv_1.17.0_all.ipk",
+      "size": 733772,
+      "sha256": "253648B348F1E5B16E073B07786FBE07A1B68B44026ADFF453B163003CEE9CD5",
+      "status": "AVAILABLE"
+    },
+    "zip_m2212": {
+      "path": "AUDIT_REPORTS/MISSION_2_2_1_2/mission2_2_1_2-final.zip",
+      "size": 3856458,
+      "sha256": "244123B0660DDF795AB5A541783C57A20558F0BE3BE9F9F6F32D58D3A6A3BAB9"
+    },
+    "zip_m23": {
+      "path": "AUDIT_REPORTS/MISSION_2_3/MISSION_2_3.zip",
+      "size": 15057,
+      "sha256": "D4B2A2E581BB82A4B49791B0F826106FF5AAC1E0D93E2714F3C55AC47F68DC00"
+    }
+  },
+  "media_validation": {
+    "hls": {
+      "url": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+      "path": "playback.path.native",
+      "automatedStatus": "PASS",
+      "userStatus": "PASS",
+      "geminiStatus": "PASS",
+      "durationTestedSec": 8.28,
+      "readyState": 4,
+      "error": null
+    },
+    "dash": {
+      "url": "https://dash.akamaized.net/akamai/bbb_30fps/bbb_30fps.mpd",
+      "path": "playback.path.native.dash",
+      "resolution": "3840x2160",
+      "automatedStatus": "PASS",
+      "userStatus": "PASS",
+      "geminiStatus": "PASS",
+      "durationTestedSec": 7.16,
+      "readyState": 4,
+      "error": null
+    },
+    "mp4": {
+      "url": "http://192.168.1.6:8088/synthetic_test.mp4",
+      "path": "playback.path.native",
+      "protocol": "HTTP 206 Partial Content (Byte Range)",
+      "resolution": "1280x720",
+      "automatedStatus": "PASS",
+      "userStatus": "PASS",
+      "geminiStatus": "PASS",
+      "durationTestedSec": 10,
+      "readyState": 4,
+      "error": null,
+      "m21IssueResolved": true
+    },
+    "remote_control": {
+      "type": "Generic IR Remote",
+      "dpad_navigation": "PASS",
+      "channel_select": "PASS",
+      "back_key": "PASS"
+    },
+    "audio": {
+      "fixture_audio": "AAC 1000Hz Sine Beep",
+      "userConfirmedAudible": true,
+      "musicalQualityTested": "NOT TESTED"
+    }
+  },
+  "background_tasks_closure": {
+    "task_3887_server": {
+      "command": "node scripts/test-server.ts --lan --port 8088",
+      "pid": 3768,
+      "status": "TERMINATED",
+      "port_8088": "CLOSED (ECONNREFUSED)"
+    },
+    "task_3555_client": {
+      "command": "node -e const { Client } ...",
+      "status": "TERMINATED"
+    },
+    "active_antigravity_tasks": 0,
+    "orphan_processes": 0
+  },
+  "cdp_security_finding": {
+    "port": 9998,
+    "status": "OPEN (CARRIED OVER TO M2.4)",
+    "manifest_inspectable": false,
+    "runtime_listener_active": true,
+    "risk": "LAN DevTools exposed during Developer Mode session",
+    "handoff_to": "M2.4"
+  },
+  "acceptance_criteria_all_pass": true
+}

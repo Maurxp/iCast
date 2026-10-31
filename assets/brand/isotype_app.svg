@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="80" height="80" fill="none">
+  <!-- iCast App Icon Squircle (80x80 / 130x130 webOS Baseline) -->
+  <defs>
+    <!-- Fondo Squircle Mineral -->
+    <linearGradient id="appBg" x1="40" y1="0" x2="40" y2="80" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#1C1E24"/>
+      <stop offset="100%" stop-color="#101114"/>
+    </linearGradient>
+    <!-- Facetas del Isotipo B -->
+    <linearGradient id="appFacet_TL" x1="28" y1="40" x2="40" y2="26" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#4B4E59"/>
+      <stop offset="100%" stop-color="#6F7380"/>
+    </linearGradient>
+    <linearGradient id="appFacet_TR" x1="40" y1="26" x2="52" y2="40" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#EDEDEF"/>
+      <stop offset="100%" stop-color="#B4B7C2"/>
+    </linearGradient>
+    <linearGradient id="appFacet_BL" x1="28" y1="40" x2="40" y2="54" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#1E2026"/>
+      <stop offset="100%" stop-color="#2D3039"/>
+    </linearGradient>
+    <linearGradient id="appFacet_BR" x1="40" y1="54" x2="52" y2="40" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#383B45"/>
+      <stop offset="100%" stop-color="#555866"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Contenedor Squircle Mineral con Borde Especular -->
+  <rect x="2" y="2" width="76" height="76" rx="18" fill="url(#appBg)"/>
+  <rect x="2" y="2" width="76" height="76" rx="18" stroke="rgba(255, 255, 255, 0.14)" stroke-width="1"/>
+
+  <!-- Prisma B Centrado a Escala (40x40 en caja de 80x80) -->
+  <g id="prisma-b">
+    <path d="M40 24L26 40L40 37V24Z" fill="url(#appFacet_TL)"/>
+    <path d="M40 24L54 40L40 37V24Z" fill="url(#appFacet_TR)"/>
+    <path d="M26 40L40 56V37L26 40Z" fill="url(#appFacet_BL)"/>
+    <path d="M54 40L40 56V37L54 40Z" fill="url(#appFacet_BR)"/>
+
+    <path d="M40 24L26 40L40 56L54 40L40 24Z" stroke="#EDEDEF" stroke-width="1.0" stroke-opacity="0.35"/>
+    <path d="M40 24V56" stroke="#EDEDEF" stroke-width="1.2" stroke-opacity="0.60"/>
+  </g>
+</svg>
+

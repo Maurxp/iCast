@@ -1,0 +1,278 @@
+/* ==========================================================================
+   iCast — Componentes Visuales Fundamentales (css/components.css)
+   Bloques de construcción de interfaz compatibles con Chromium 53
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Contrato de Foco Tridimensional Neutro
+   -------------------------------------------------------------------------- */
+.icast-focusable {
+  position: relative;
+  transition: transform var(--dur-focus) var(--ease-out),
+              background-color var(--dur-focus) ease,
+              border-color var(--dur-focus) ease,
+              box-shadow var(--dur-focus) ease;
+}
+
+.icast-focusable:focus,
+.icast-focusable.focused {
+  outline: none;
+  background-color: var(--focus-surface-highlight);
+  border-color: var(--focus-ring-color) !important;
+  box-shadow:
+    0 0 0 2px var(--focus-halo-inner),
+    0 0 0 4px var(--focus-ring-color),
+    var(--shadow-focus);
+  transform: scale(1.03);
+  z-index: 10;
+}
+
+/* --------------------------------------------------------------------------
+   2. Botones Primarios y Secundarios
+   -------------------------------------------------------------------------- */
+.icast-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px 28px;
+  border-radius: var(--radius-tile);
+  background: var(--text-primary);
+  color: var(--bg-base);
+  font-family: var(--font-family-tv);
+  font-size: var(--font-body);
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all var(--dur-focus) var(--ease-out);
+}
+
+.icast-btn-primary:focus,
+.icast-btn-primary.focused {
+  background: var(--accent-neutral);
+  color: #101114;
+  box-shadow:
+    0 0 0 2px var(--focus-halo-inner),
+    0 0 0 4px var(--focus-ring-color),
+    var(--shadow-focus);
+  transform: scale(1.03);
+  outline: none;
+}
+
+.icast-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px 24px;
+  border-radius: var(--radius-tile);
+  background: var(--bg-surface-secondary);
+  color: var(--text-primary);
+  font-family: var(--font-family-tv);
+  font-size: var(--font-body);
+  font-weight: 600;
+  border: 1px solid var(--border-hairline);
+  cursor: pointer;
+  transition: all var(--dur-focus) var(--ease-out);
+}
+
+.icast-btn-secondary:focus,
+.icast-btn-secondary.focused {
+  background: var(--focus-surface-highlight);
+  border-color: var(--focus-ring-color);
+  box-shadow:
+    0 0 0 2px var(--focus-halo-inner),
+    0 0 0 4px var(--focus-ring-color);
+  transform: scale(1.03);
+  outline: none;
+}
+
+/* --------------------------------------------------------------------------
+   3. Botón de Icono Circular
+   -------------------------------------------------------------------------- */
+.icast-btn-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1px solid var(--border-hairline);
+  background: var(--bg-surface-secondary);
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--dur-focus) var(--ease-out);
+}
+
+.icast-btn-icon:focus,
+.icast-btn-icon.focused {
+  background: var(--focus-surface-highlight);
+  border-color: var(--focus-ring-color);
+  box-shadow:
+    0 0 0 2px var(--focus-halo-inner),
+    0 0 0 4px var(--focus-ring-color);
+  outline: none;
+  transform: scale(1.05);
+}
+
+/* --------------------------------------------------------------------------
+   4. Tarjetas y Celdas de Catálogo
+   -------------------------------------------------------------------------- */
+.icast-card {
+  background-color: var(--bg-surface-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-card);
+  padding: 24px;
+  box-shadow: var(--shadow-card);
+}
+
+.icast-channel-tile {
+  height: 92px;
+  border-radius: var(--radius-tile);
+  background: var(--bg-surface-primary);
+  border: 1px solid var(--border-subtle);
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+  position: relative;
+  transition: transform var(--dur-focus) var(--ease-out),
+              background-color var(--dur-focus) ease,
+              border-color var(--dur-focus) ease,
+              box-shadow var(--dur-focus) ease;
+}
+
+.icast-channel-tile:focus,
+.icast-channel-tile.focused {
+  background-color: var(--focus-surface-highlight);
+  border-color: var(--focus-ring-color) !important;
+  box-shadow:
+    0 0 0 2px var(--focus-halo-inner),
+    0 0 0 4px var(--focus-ring-color),
+    var(--shadow-focus);
+  transform: scale(1.03);
+  z-index: 10;
+  outline: none;
+}
+
+.icast-channel-tile.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 14px;
+  bottom: 14px;
+  width: 4px;
+  background: var(--accent-neutral);
+  border-radius: 0 4px 4px 0;
+}
+
+/* --------------------------------------------------------------------------
+   5. Insignias Semánticas (Badges)
+   -------------------------------------------------------------------------- */
+.icast-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-family-tv);
+  font-size: var(--font-cap);
+  font-weight: 700;
+  letter-spacing: var(--tracking-badge);
+  background: var(--badge-codec-bg);
+  color: var(--badge-codec-text);
+  border: 1px solid var(--border-subtle);
+}
+
+.icast-badge-live {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--badge-live-bg);
+  color: var(--badge-live-dot);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  border: 1px solid rgba(220, 38, 38, 0.25);
+}
+
+.icast-badge-live::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--badge-live-dot);
+}
+
+/* --------------------------------------------------------------------------
+   6. Elementos de Navegación
+   -------------------------------------------------------------------------- */
+.icast-nav-item {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 22px;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-family-tv);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all var(--dur-focus) var(--ease-out);
+}
+
+.icast-nav-item:focus,
+.icast-nav-item.focused {
+  color: var(--text-primary);
+  background: var(--focus-surface-highlight);
+  box-shadow:
+    0 0 0 2px var(--focus-halo-inner),
+    0 0 0 4px var(--focus-ring-color);
+  outline: none;
+}
+
+.icast-nav-item.active {
+  color: var(--text-primary);
+  background: var(--accent-neutral-subtle);
+  border: 1px solid var(--border-hairline);
+}
+
+/* --------------------------------------------------------------------------
+   7. Modales y Paneles Flotantes
+   -------------------------------------------------------------------------- */
+.icast-modal-scrim {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--overlay-scrim);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity var(--dur-modal) ease;
+}
+
+.icast-modal-scrim.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.icast-modal-dialog {
+  width: 680px;
+  max-width: 90vw;
+  padding: 32px 36px;
+}
+
+.icast-floating-panel {
+  position: fixed;
+  z-index: 100;
+  padding: 22px 32px;
+  box-shadow: var(--shadow-floating);
+}
+

@@ -1,0 +1,116 @@
+/* ==========================================================================
+   iCast M3.0.1 Master Design Tokens (Obsidian & Porcelain)
+   ========================================================================== */
+
+:root {
+  /* Escala de Espaciado Modular */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+
+  /* Radios de Curvatura (Squircle) */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-tile: 12px;
+  --radius-card: 16px;
+  --radius-modal: 20px;
+  --radius-pill: 999px;
+
+  /* Tipografía para 10-Foot UI */
+  --font-family: 'LG Smart UI', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-hero: 42px;
+  --font-title1: 30px;
+  --font-title2: 24px;
+  --font-title3: 19px;
+  --font-body: 16px;
+  --font-call: 14px;
+  --font-cap: 12px;
+
+  /* Movimiento Acelerado por GPU */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-focus: 140ms;
+  --dur-panel: 180ms;
+  --dur-modal: 160ms;
+}
+
+/* ==========================================================================
+   Modo Oscuro: OBSIDIAN (Predeterminado)
+   ========================================================================== */
+html[data-theme="dark"],
+:root {
+  --bg-base: #101114;
+  --bg-surface-primary: #191A1F;
+  --bg-surface-secondary: #24262B;
+  --bg-surface-elevated: #2D3037;
+
+  --text-primary: #EDEDEF;
+  --text-secondary: #A5A6AC;
+  --text-muted: #70727A;
+
+  --accent-neutral: #C8BFAF;
+  --accent-neutral-subtle: rgba(200, 191, 175, 0.15);
+  --focus-ring-color: #EDEDEF;
+  --focus-halo-inner: #101114;
+  --focus-surface-highlight: #2A2D35;
+
+  /* Acentos Funcionales Discretos */
+  --badge-live-bg: #8B2525;
+  --badge-live-dot: #E05252;
+  --badge-codec-text: #A5A6AC;
+  --badge-codec-bg: rgba(255, 255, 255, 0.08);
+
+  /* Bordes y Reflejos */
+  --border-subtle: rgba(255, 255, 255, 0.07);
+  --border-hairline: rgba(255, 255, 255, 0.12);
+  --border-specular: rgba(255, 255, 255, 0.22);
+  --overlay-scrim: rgba(8, 9, 12, 0.85);
+
+  /* Sombras */
+  --shadow-card: 0 4px 16px rgba(0, 0, 0, 0.40);
+  --shadow-focus: 0 12px 32px rgba(0, 0, 0, 0.60);
+  --shadow-floating: 0 20px 48px rgba(0, 0, 0, 0.75);
+}
+
+/* ==========================================================================
+   Modo Claro: PORCELAIN (Alternativo Diurno)
+   ========================================================================== */
+html[data-theme="light"] {
+  --bg-base: #F3F2EF;
+  --bg-surface-primary: #FFFFFF;
+  --bg-surface-secondary: #E8E7E3;
+  --bg-surface-elevated: #FFFFFF;
+
+  --text-primary: #252629;
+  --text-secondary: #777873;
+  --text-muted: #A1A29D;
+
+  --accent-neutral: #A99476;
+  --accent-neutral-subtle: rgba(169, 148, 118, 0.18);
+  --focus-ring-color: #252629;
+  --focus-halo-inner: #FFFFFF;
+  --focus-surface-highlight: #F9F9F8;
+
+  /* Acentos Funcionales Discretos */
+  --badge-live-bg: #FEE2E2;
+  --badge-live-dot: #DC2626;
+  --badge-codec-text: #475569;
+  --badge-codec-bg: rgba(0, 0, 0, 0.06);
+
+  /* Bordes y Reflejos */
+  --border-subtle: rgba(0, 0, 0, 0.06);
+  --border-hairline: rgba(0, 0, 0, 0.10);
+  --border-specular: rgba(255, 255, 255, 0.85);
+  --overlay-scrim: rgba(37, 38, 41, 0.55);
+
+  /* Sombras */
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.05);
+  --shadow-focus: 0 8px 24px rgba(37, 38, 41, 0.16);
+  --shadow-floating: 0 16px 36px rgba(0, 0, 0, 0.12);
+}
+

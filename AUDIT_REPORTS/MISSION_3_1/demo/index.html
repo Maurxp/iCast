@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="obsidian">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1920, height=1080, initial-scale=1.0">
+  <title>iCast — Design Foundations & Visual Showroom (M3.1)</title>
+  <link rel="stylesheet" href="../../../css/tokens.css">
+  <link rel="stylesheet" href="../../../css/materials.css">
+  <link rel="stylesheet" href="../../../css/themes.css">
+  <link rel="stylesheet" href="../../../css/components.css">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background-color: var(--bg-base);
+      color: var(--text-primary);
+      font-family: var(--font-family-tv);
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      padding: var(--space-8) var(--space-12);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: background-color var(--motion-duration-normal) var(--motion-ease-default),
+                  color var(--motion-duration-normal) var(--motion-ease-default);
+    }
+    .demo-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: var(--space-4);
+    }
+    .demo-header-left {
+      display: flex;
+      align-items: center;
+    }
+    .demo-header-left > * + * {
+      margin-left: var(--space-6);
+    }
+    .demo-header-badge {
+      font-size: var(--font-caption);
+      padding: 4px 12px;
+      border-radius: var(--radius-pill);
+      background: var(--accent-neutral-subtle);
+      color: var(--accent-neutral);
+      border: 1px solid var(--border-active);
+      font-weight: 600;
+      letter-spacing: 0.05em;
+    }
+    .demo-header-right {
+      display: flex;
+      align-items: center;
+    }
+    .demo-header-right > * + * {
+      margin-left: var(--space-4);
+    }
+    .demo-controls-hint {
+      font-size: var(--font-caption);
+      color: var(--text-secondary);
+    }
+    .demo-controls-hint kbd {
+      background: var(--bg-surface-secondary);
+      border: 1px solid var(--border-subtle);
+      padding: 2px 6px;
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      font-family: inherit;
+    }
+
+    /* Grid Sections */
+    .demo-grid {
+      display: flex;
+      flex: 1;
+      margin-top: var(--space-6);
+      margin-bottom: var(--space-6);
+    }
+    .demo-grid > * + * {
+      margin-left: var(--space-8);
+    }
+    .demo-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .demo-col > * + * {
+      margin-top: var(--space-6);
+    }
+    .demo-section-title {
+      font-size: var(--font-headline);
+      font-weight: 600;
+      margin-bottom: var(--space-3);
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+    }
+    .demo-section-title > * + * {
+      margin-left: var(--space-3);
+    }
+
+    /* Brand Scale Row */
+    .brand-scale-row {
+      display: flex;
+      align-items: center;
+      padding: var(--space-4);
+    }
+    .brand-scale-row > * + * {
+      margin-left: var(--space-6);
+    }
+    .brand-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .brand-item > * + * {
+      margin-top: var(--space-2);
+    }
+    .brand-item-label {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* Palette Swatches */
+    .swatches-grid {
+      display: flex;
+      flex-direction: column;
+    }
+    .swatches-grid > * + * {
+      margin-top: var(--space-2);
+    }
+    .swatch-row {
+      display: flex;
+      align-items: center;
+      padding: var(--space-2) var(--space-3);
+      border-radius: var(--radius-sm);
+      background: var(--bg-surface-secondary);
+      justify-content: space-between;
+    }
+    .swatch-color-box {
+      width: 24px;
+      height: 24px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-subtle);
+    }
+    .swatch-name {
+      font-size: 14px;
+      color: var(--text-primary);
+      flex: 1;
+      margin-left: var(--space-3);
+    }
+    .swatch-val {
+      font-size: 13px;
+      color: var(--text-secondary);
+      font-family: monospace;
+    }
+
+    /* Materials Column */
+    .material-card {
+      padding: var(--space-5);
+      min-height: 110px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .material-card-title {
+      font-size: var(--font-title);
+      font-weight: 600;
+      margin-bottom: var(--space-1);
+    }
+    .material-card-desc {
+      font-size: var(--font-caption);
+      color: var(--text-secondary);
+    }
+
+    /* Interactive Components Demo */
+    .btn-group {
+      display: flex;
+      align-items: center;
+    }
+    .btn-group > * + * {
+      margin-left: var(--space-4);
+    }
+    .tile-group {
+      display: flex;
+      flex-direction: column;
+    }
+    .tile-group > * + * {
+      margin-top: var(--space-3);
+    }
+
+    /* Modal Preview Card */
+    .modal-preview-box {
+      padding: var(--space-6);
+      display: flex;
+      flex-direction: column;
+    }
+    .modal-preview-box > * + * {
+      margin-top: var(--space-4);
+    }
+
+    /* Footer Status */
+    .demo-footer {
+      border-top: 1px solid var(--border-subtle);
+      padding-top: var(--space-3);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: var(--font-caption);
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Header Bar -->
+  <header class="demo-header">
+    <div class="demo-header-left">
+      <div id="brand-logo-container">
+        <!-- SVG Brand Lockup -->
+        <svg id="header-brand-logo" width="160" height="44" viewBox="0 0 160 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <g transform="translate(6, 4)">
+            <path d="M18 0L36 18L18 20Z" fill="var(--text-primary)"/>
+            <path d="M18 0L0 18L18 20Z" fill="var(--accent-neutral)"/>
+            <path d="M0 18L18 36L18 20Z" fill="var(--text-secondary)"/>
+            <path d="M36 18L18 36L18 20Z" fill="var(--text-muted)"/>
+          </g>
+          <text x="56" y="27" font-family="'LG Smart UI', -apple-system, sans-serif" font-size="24" font-weight="700" letter-spacing="-0.02em" fill="var(--text-primary)">
+            iCast
+          </text>
+        </svg>
+      </div>
+      <span class="demo-header-badge">M3.1 FOUNDATIONS</span>
+      <span style="font-size: var(--font-body); color: var(--text-secondary);">10-Foot Design System Showroom</span>
+    </div>
+
+    <div class="demo-header-right">
+      <div class="demo-controls-hint">
+        Remote: <kbd>&uarr;</kbd> <kbd>&darr;</kbd> <kbd>&larr;</kbd> <kbd>&rarr;</kbd> D-Pad • <kbd>Enter</kbd> Select • <kbd>T</kbd> Toggle Theme
+      </div>
+      <button id="theme-toggle-btn" class="icast-btn-secondary icast-focusable" tabindex="0" data-key="btn-theme-toggle">
+        <span class="icast-btn-label" id="theme-btn-label">Theme: Obsidian (Dark)</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main 3-Column Display -->
+  <main class="demo-grid">
+
+    <!-- Column 1: Brand & Palette -->
+    <section class="demo-col">
+      <div>
+        <h2 class="demo-section-title">Brand Geometry & Hierarchy</h2>
+        <div class="icast-material-translucent brand-scale-row">
+          <!-- 16px -->
+          <div class="brand-item">
+            <svg width="16" height="16" viewBox="0 0 36 36"><path d="M18 0L36 18L18 20Z" fill="var(--text-primary)"/><path d="M18 0L0 18L18 20Z" fill="var(--accent-neutral)"/><path d="M0 18L18 36L18 20Z" fill="var(--text-secondary)"/><path d="M36 18L18 36L18 20Z" fill="var(--text-muted)"/></svg>
+            <span class="brand-item-label">16px</span>
+          </div>
+          <!-- 24px -->
+          <div class="brand-item">
+            <svg width="24" height="24" viewBox="0 0 36 36"><path d="M18 0L36 18L18 20Z" fill="var(--text-primary)"/><path d="M18 0L0 18L18 20Z" fill="var(--accent-neutral)"/><path d="M0 18L18 36L18 20Z" fill="var(--text-secondary)"/><path d="M36 18L18 36L18 20Z" fill="var(--text-muted)"/></svg>
+            <span class="brand-item-label">24px</span>
+          </div>
+          <!-- 32px -->
+          <div class="brand-item">
+            <svg width="32" height="32" viewBox="0 0 36 36"><path d="M18 0L36 18L18 20Z" fill="var(--text-primary)"/><path d="M18 0L0 18L18 20Z" fill="var(--accent-neutral)"/><path d="M0 18L18 36L18 20Z" fill="var(--text-secondary)"/><path d="M36 18L18 36L18 20Z" fill="var(--text-muted)"/></svg>
+            <span class="brand-item-label">32px</span>
+          </div>
+          <!-- 48px -->
+          <div class="brand-item">
+            <svg width="48" height="48" viewBox="0 0 36 36"><path d="M18 0L36 18L18 20Z" fill="var(--text-primary)"/><path d="M18 0L0 18L18 20Z" fill="var(--accent-neutral)"/><path d="M0 18L18 36L18 20Z" fill="var(--text-secondary)"/><path d="M36 18L18 36L18 20Z" fill="var(--text-muted)"/></svg>
+            <span class="brand-item-label">48px</span>
+          </div>
+          <!-- 80px Squircle -->
+          <div class="brand-item">
+            <svg width="64" height="64" viewBox="0 0 80 80">
+              <rect width="80" height="80" rx="18" fill="var(--bg-surface-elevated)" stroke="var(--border-subtle)" stroke-width="2"/>
+              <g transform="translate(22, 22)">
+                <path d="M18 0L36 18L18 20Z" fill="var(--text-primary)"/>
+                <path d="M18 0L0 18L18 20Z" fill="var(--accent-neutral)"/>
+                <path d="M0 18L18 36L18 20Z" fill="var(--text-secondary)"/>
+                <path d="M36 18L18 36L18 20Z" fill="var(--text-muted)"/>
+              </g>
+            </svg>
+            <span class="brand-item-label">App Icon</span>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h2 class="demo-section-title">Color Palette Tokens</h2>
+        <div class="swatches-grid">
+          <div class="swatch-row">
+            <div class="swatch-color-box" style="background: var(--bg-base);"></div>
+            <span class="swatch-name">--bg-base</span>
+            <span class="swatch-val">Canvas Base</span>
+          </div>
+          <div class="swatch-row">
+            <div class="swatch-color-box" style="background: var(--bg-surface-primary);"></div>
+            <span class="swatch-name">--bg-surface-primary</span>
+            <span class="swatch-val">Primary Surface</span>
+          </div>
+          <div class="swatch-row">
+            <div class="swatch-color-box" style="background: var(--bg-surface-secondary);"></div>
+            <span class="swatch-name">--bg-surface-secondary</span>
+            <span class="swatch-val">Secondary Surface</span>
+          </div>
+          <div class="swatch-row">
+            <div class="swatch-color-box" style="background: var(--accent-neutral);"></div>
+            <span class="swatch-name">--accent-neutral</span>
+            <span class="swatch-val">Warm Titanium</span>
+          </div>
+          <div class="swatch-row">
+            <div class="swatch-color-box" style="background: var(--text-primary);"></div>
+            <span class="swatch-name">--text-primary</span>
+            <span class="swatch-val">15:1 AAA Text</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Column 2: Material Tiers & Focus System -->
+    <section class="demo-col">
+      <div>
+        <h2 class="demo-section-title">3-Tier Liquid Glass Materials</h2>
+        <div style="display: flex; flex-direction: column; gap: var(--space-4);">
+          <!-- Tier 1 -->
+          <div class="icast-material-base material-card" style="border: 1px solid var(--border-subtle); border-radius: var(--radius-lg);">
+            <div class="material-card-title">Level 1: Base Material</div>
+            <div class="material-card-desc">100% Solid mineral plane. Zero compositor cost, zero drop-shadow overhead.</div>
+          </div>
+          <!-- Tier 2 -->
+          <div class="icast-material-translucent material-card">
+            <div class="material-card-title">Level 2: Translucent Material</div>
+            <div class="material-card-desc">88-92% Alpha simulation with sub-pixel boundary. Used for docked navigation & drawers.</div>
+          </div>
+          <!-- Tier 3 -->
+          <div class="icast-material-prominent material-card">
+            <div class="material-card-title">Level 3: Prominent Material</div>
+            <div class="material-card-desc">Elevated surface with top specular light highlight & elevation shadow 3.</div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h2 class="demo-section-title">Interactive Focusable Components</h2>
+        <div class="btn-group">
+          <button class="icast-btn-primary icast-focusable" tabindex="0" data-key="btn-primary">
+            <span class="icast-btn-label">Primary Action</span>
+          </button>
+          <button class="icast-btn-secondary icast-focusable" tabindex="0" data-key="btn-secondary">
+            <span class="icast-btn-label">Secondary Action</span>
+          </button>
+          <button class="icast-btn-icon icast-focusable" tabindex="0" data-key="btn-fav" aria-label="Favorite">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Column 3: TV Tiles & Modal Overlay -->
+    <section class="demo-col">
+      <div>
+        <h2 class="demo-section-title">Live & VOD Content Cards</h2>
+        <div class="tile-group">
+          <!-- Channel Tile -->
+          <div class="icast-channel-tile icast-focusable" tabindex="0" data-key="tile-ch-1">
+            <div class="icast-channel-tile-logo">
+              <span class="icast-channel-tile-number">01</span>
+            </div>
+            <div class="icast-channel-tile-info">
+              <div class="icast-channel-tile-name">BBC One HD</div>
+              <div class="icast-channel-tile-prog">Planet Earth III • 4K UHD</div>
+            </div>
+            <span class="icast-badge icast-badge-live">LIVE</span>
+            <span class="icast-badge icast-badge-codec" style="margin-left: 6px;">4K HDR</span>
+          </div>
+
+          <!-- Channel Tile 2 -->
+          <div class="icast-channel-tile icast-focusable" tabindex="0" data-key="tile-ch-2">
+            <div class="icast-channel-tile-logo">
+              <span class="icast-channel-tile-number">02</span>
+            </div>
+            <div class="icast-channel-tile-info">
+              <div class="icast-channel-tile-name">Discovery Channel</div>
+              <div class="icast-channel-tile-prog">Deep Ocean Expedition</div>
+            </div>
+            <span class="icast-badge icast-badge-live">LIVE</span>
+            <span class="icast-badge icast-badge-codec" style="margin-left: 6px;">5.1 AC3</span>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h2 class="demo-section-title">Level 3 Prominent Modal Dialog</h2>
+        <div class="icast-material-prominent modal-preview-box">
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <h3 style="font-size: var(--font-title); font-weight: 600;">Confirm Favorite Channel</h3>
+            <span class="icast-badge icast-badge-codec">Security PIN</span>
+          </div>
+          <p style="font-size: var(--font-body); color: var(--text-secondary); line-height: 1.4;">
+            Are you sure you want to add <strong>BBC One HD</strong> to your Quick Access favorites list?
+          </p>
+          <div style="display: flex; justify-content: flex-end; gap: var(--space-3); margin-top: var(--space-4);">
+            <button class="icast-btn-secondary icast-focusable" tabindex="0" data-key="modal-btn-cancel">Cancel</button>
+            <button class="icast-btn-primary icast-focusable" tabindex="0" data-key="modal-btn-confirm">Confirm</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Bottom System Status -->
+  <footer class="demo-footer">
+    <div>App: <strong>iCast (com.lennylxx.iptv)</strong> v1.17.0 • Target: LG 65UM7400PDA (Chromium 53)</div>
+    <div>Dual-Ring Focus: 2px Inner Gap + 2px Outer Ring • Zero Saturated Cyan • 100% WCAG AAA Compliant</div>
+  </footer>
+
+  <script>
+    // D-Pad and Keyboard Remote Navigation Controller
+    const focusableElements = Array.from(document.querySelectorAll('.icast-focusable'));
+    let currentFocusIndex = 0;
+
+    function setFocus(index) {
+      if (index < 0) index = focusableElements.length - 1;
+      if (index >= focusableElements.length) index = 0;
+      currentFocusIndex = index;
+      focusableElements[currentFocusIndex].focus();
+    }
+
+    // Toggle Theme Controller
+    function toggleTheme() {
+      const html = document.documentElement;
+      const isObsidian = html.dataset.theme === 'obsidian';
+      const nextTheme = isObsidian ? 'porcelain' : 'obsidian';
+      html.dataset.theme = nextTheme;
+      document.getElementById('theme-btn-label').textContent = isObsidian
+        ? 'Theme: Porcelain (Light)'
+        : 'Theme: Obsidian (Dark)';
+    }
+
+    document.getElementById('theme-toggle-btn').addEventListener('click', toggleTheme);
+
+    // Keyboard and D-pad remote listener
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 't' || e.key === 'T') {
+        toggleTheme();
+        return;
+      }
+
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+        e.preventDefault();
+        setFocus(currentFocusIndex + 1);
+      } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        setFocus(currentFocusIndex - 1);
+      } else if (e.key === 'Enter') {
+        const active = document.activeElement;
+        if (active && active.click) {
+          active.click();
+        }
+      }
+    });
+
+    // Auto-focus first primary button on boot
+    window.addEventListener('DOMContentLoaded', () => {
+      const primaryBtn = document.querySelector('[data-key="btn-primary"]');
+      if (primaryBtn) {
+        currentFocusIndex = focusableElements.indexOf(primaryBtn);
+        primaryBtn.focus();
+      }
+    });
+  </script>
+</body>
+</html>
+

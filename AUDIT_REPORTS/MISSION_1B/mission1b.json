@@ -1,0 +1,79 @@
+{
+  "mission": "1B",
+  "project": "webos-iptv-player",
+  "version": "1.17.0",
+  "branch": "fix/mission-1b-hardening",
+  "timestamp": "2026-10-30T02:43:00Z",
+  "target_device": {
+    "model": "LG 65UM7400PDA",
+    "webos_version": "webOS TV Lite 4.10.2-29",
+    "api_version": "4.1.0",
+    "chromium_version": "53.0.2785.34",
+    "nodejs_version": "0.12.2",
+    "architecture": "ARMv7 (32-bit)",
+    "soc": "Realtek RTD2870",
+    "kernel": "Linux 4.4.84",
+    "resolution": "1920x1080"
+  },
+  "package": {
+    "filename": "com.lennylxx.iptv_1.17.0_all.ipk",
+    "path": "AUDIT_REPORTS/MISSION_1B/package/com.lennylxx.iptv_1.17.0_all.ipk",
+    "sha256": "A1849BD9ED1328BE30DAE289130A1EE7E668F1EB8E287627624F903037E8DB1F",
+    "size_bytes": 729518,
+    "size_kb": 712.42,
+    "installed_size_bytes": 2645759,
+    "app_id": "com.lennylxx.iptv",
+    "service_id": "com.lennylxx.iptv.service"
+  },
+  "quality_gates": {
+    "typecheck_app": { "status": "PASSED", "errors": 0 },
+    "typecheck_service": { "status": "PASSED", "errors": 0 },
+    "lint_css": { "status": "PASSED", "errors": 0 },
+    "lint_js": { "status": "PASSED", "errors": 0 },
+    "service_compat_node012": { "status": "PASSED", "target": "Node.js 0.12.2", "errors": 0 },
+    "app_compat_chromium53": { "status": "PASSED", "target": "Chromium 53", "errors": 0 },
+    "package_resource_validator": { "status": "PASSED", "checked_resources": 26, "errors": 0 }
+  },
+  "test_metrics": {
+    "lan_server_tests": { "total": 48, "passed": 48, "failed": 0, "pass_rate": 1.0 },
+    "setup_page_tests": { "total": 11, "passed": 11, "failed": 0, "pass_rate": 1.0 },
+    "resource_validator_tests": { "total": 6, "passed": 6, "failed": 0, "pass_rate": 1.0 },
+    "full_vitest_suite": {
+      "total": 3428,
+      "passed": 3421,
+      "failed": 3,
+      "skipped": 4,
+      "pass_rate": 0.9991,
+      "host_limitations": [
+        "scripts/eslint-focus-rules.test.mjs (CRLF regex on Windows)",
+        "scripts/tv-diag.test.mjs (curl child process on Windows)",
+        "scripts/tv-input.test.mjs (POSIX 0o600 permission test on NTFS)"
+      ]
+    }
+  },
+  "security_hardening_checklist": {
+    "lan_unauthenticated_reads_blocked": true,
+    "loopback_tv_access_preserved": true,
+    "multi_transport_token_supported": true,
+    "cors_restricted_to_lan_and_loopback": true,
+    "options_preflight_handled": true,
+    "file_permissions_0o600_enforced": true,
+    "preview_libs_dangling_script_resolved": true,
+    "automated_resource_validator_implemented": true
+  },
+  "deliverables": [
+    "AUDIT_REPORTS/MISSION_1B/INITIAL_STATE.md",
+    "AUDIT_REPORTS/MISSION_1B/LAN_SECURITY_AUDIT.md",
+    "AUDIT_REPORTS/MISSION_1B/LAN_SECURITY_FIXES.md",
+    "AUDIT_REPORTS/MISSION_1B/STORAGE_SECURITY_AUDIT.md",
+    "AUDIT_REPORTS/MISSION_1B/BUILD_AND_PACKAGING_AUDIT.md",
+    "AUDIT_REPORTS/MISSION_1B/COMPATIBILITY_CHECK.md",
+    "AUDIT_REPORTS/MISSION_1B/TEST_RESULTS.md",
+    "AUDIT_REPORTS/MISSION_1B/IPK_VALIDATION.md",
+    "AUDIT_REPORTS/MISSION_1B/REMAINING_RISKS.md",
+    "AUDIT_REPORTS/MISSION_1B/MISSION_1B_SUMMARY.md",
+    "AUDIT_REPORTS/MISSION_1B/mission1b.json",
+    "AUDIT_REPORTS/MISSION_1B/package/com.lennylxx.iptv_1.17.0_all.ipk"
+  ]
+}
+

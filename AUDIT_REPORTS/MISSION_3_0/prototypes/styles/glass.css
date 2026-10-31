@@ -1,0 +1,49 @@
+/* ==========================================================================
+   iCast Prototype — Liquid Glass Tier 1 & Effects (glass.css)
+   ========================================================================== */
+
+/* Nivel 1: Vidrio Visual Óptico (Compatible 100% con Chromium 53) */
+.icast-glass {
+  background-color: var(--bg-elevated);
+  background-image: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.08) 0%,
+    rgba(255, 255, 255, 0.02) 40%,
+    rgba(0, 0, 0, 0.20) 100%
+  );
+  border: 1px solid var(--border-glass);
+  border-top-color: var(--border-specular);
+  border-radius: var(--radius-card);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.16),
+    var(--shadow-modal);
+}
+
+/* Variante Vidrio para HUD / OSD de Vídeo */
+.icast-glass-hud {
+  background-color: rgba(14, 18, 26, 0.88);
+  background-image: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.06) 0%,
+    rgba(0, 0, 0, 0.25) 100%
+  );
+  border: 1px solid var(--border-glass);
+  border-top-color: var(--border-specular);
+  border-radius: var(--radius-modal);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.20),
+    0 16px 40px rgba(0, 0, 0, 0.65);
+}
+
+/* Mejora progresiva solo para motores modernos con soporte de backdrop-filter */
+@supports (backdrop-filter: blur(1px)) {
+  .icast-glass {
+    -webkit-backdrop-filter: blur(20px) saturate(1.3);
+    backdrop-filter: blur(20px) saturate(1.3);
+  }
+  .icast-glass-hud {
+    -webkit-backdrop-filter: blur(24px) saturate(1.4);
+    backdrop-filter: blur(24px) saturate(1.4);
+  }
+}
+

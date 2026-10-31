@@ -1,0 +1,278 @@
+{
+  "auditMetadata": {
+    "auditTimestamp": "2026-10-29T19:30:00-05:00",
+    "auditorRole": "Senior Embedded Software Engineer - webOS / Linux ARM Specialist",
+    "projectRepository": "https://github.com/lennylxx/webos-iptv-player",
+    "localWorkspace": "C:\\Users\\amaur\\Desktop\\webos-iptv-player",
+    "mode": "Static Codebase Audit + Read-Only SSH Dynamic Device Inspection"
+  },
+  "deviceProfile": {
+    "manufacturer": "LG Electronics",
+    "model": "65UM7400PDA",
+    "serialNumber": "907RMKUAG277",
+    "operatingSystem": "webOS TV Lite",
+    "osRelease": "4.10.2-29 (goldilocks2-grampians)",
+    "webosApiVersion": "4.1.0",
+    "firmwareVersion": "05.40.97",
+    "platformName": "Rockhopper",
+    "socPlatform": "Realtek RTD2870 (k5lp / K5LP_DVB)",
+    "boardType": "BOARD_DV_1ST",
+    "cpu": {
+      "model": "ARMv7 Processor rev 0 (v7l)",
+      "cores": 4,
+      "architecture": "armv7l (32-bit)",
+      "features": "half thumb fastmult vfp edsp neon vfpv3 tls vfpv4 idiva idivt vfpd32 lpae evtstrm aes pmull sha1 sha2 crc32"
+    },
+    "memory": {
+      "physicalRam": "1.5 GB",
+      "memTotalLinuxKb": 987348,
+      "memAvailableKb": 370248,
+      "cmaTotalKb": 172032,
+      "swapTotalKb": 716796,
+      "swapFreeKb": 634856
+    },
+    "storage": {
+      "rootFilesystem": "overlay 26.0M (100% used, read-only)",
+      "mediaApplicationsPartition": "/dev/mmcblk0p58 (617.3M total, 320.2M used, 284.5M available)",
+      "userDataPartition": "/dev/mmcblk0p57 (525.3M total, 273.3M used, 213.6M available)"
+    },
+    "runtimes": {
+      "chromiumEngine": "53.0.2785.34 (libcbe.so)",
+      "nodeEngine": "v0.12.2 (/usr/bin/node)",
+      "gstreamer": "1.14.1 (/usr/bin/gst-launch-1.0)",
+      "python": "2.7.12 (/usr/bin/python)"
+    },
+    "homebrewEnvironment": {
+      "homebrewChannelVersion": "0.7.3",
+      "homebrewChannelAppId": "org.webosbrew.hbchannel",
+      "opkgVersion": "0.3.3",
+      "opkgArchitecture": "k5lp (priority 201)",
+      "installedApps": [
+        "org.webosbrew.hbchannel",
+        "youtube.leanback.v4",
+        "com.retroarch.webos",
+        "amazon",
+        "com.apple.appletv",
+        "com.disney.disneyplus-prod",
+        "com.iptvsmarters.app",
+        "com.pplus.webapp.prod-intl",
+        "com.wbd.stream",
+        "netflix",
+        "spotify-beehive",
+        "tv.twitch.tv.starshot.lg",
+        "vix"
+      ]
+    }
+  },
+  "projectProfile": {
+    "appId": "com.lennylxx.iptv",
+    "version": "1.17.0",
+    "serviceId": "com.lennylxx.iptv.service",
+    "resolution": "1920x1080",
+    "entryPoint": "src/app.ts",
+    "bundler": "esbuild 0.28 (target: chrome53)",
+    "workerEntryPoint": "src/workers/app-worker.ts",
+    "framework": "Vanilla TypeScript (Zero-Framework)",
+    "reconciliationEngine": "morph() + Safe html tagged template",
+    "serviceRuntimeTarget": "Node.js 0.12.2 / ES5 CommonJS",
+    "dependencies": {
+      "production": [
+        "assjs@0.1.10",
+        "fflate@0.8.3",
+        "iso-639-1@3.1.6",
+        "iso-639-2@3.0.2",
+        "qrcode-generator@2.0.4"
+      ],
+      "lazyBundled": [
+        "shaka-player@5.2.12"
+      ],
+      "previewOnly": [
+        "hls.js@1.7.3",
+        "mpegts.js@1.8.2"
+      ]
+    }
+  },
+  "multimediaAudit": {
+    "webosPlaybackPath": "Native <video src> pipeline through uMediaServer and starfish-media-pipeline",
+    "hardwareVideoDecoders": [
+      "omxh264dec (H.264 / AVC)",
+      "omxh265dec (H.265 / HEVC Main/Main10 4K@60fps)",
+      "omxvp9dec (VP9 Profile 0/2 4K@60fps)",
+      "omxvp8dec (VP8)",
+      "omxmpegvideodec (MPEG-2 / MPEG-4)",
+      "omxvc1dec (VC-1 / WMV)"
+    ],
+    "hardwareAudioDecoders": [
+      "omxaacdec (AAC)",
+      "omxac3dec (AC-3 / Dolby Digital)",
+      "omxac4dec (Dolby AC-4)",
+      "omxdtsdec (DTS Audio)",
+      "omxmp3dec (MP3)",
+      "omxopusdec (Opus)",
+      "omxflacdec (FLAC)"
+    ],
+    "unsupportedHardwareCodecs": [
+      "AV1 (no omxav1dec on Realtek RTD2870)"
+    ],
+    "vdecHardwareInstances": 2,
+    "dolbyVisionCapability": "Profile 5 native hardware support; Profile 7 dual-layer UHD Blu-ray decodes as HDR10 base layer",
+    "drmCapabilities": {
+      "playReady": "Native hardware playback via com.webos.service.drm",
+      "widevineModular": "Supported via Shaka Player MSE/EME (draft 2015 specification, cenc scheme)"
+    }
+  },
+  "investigationCommands": [
+    {
+      "command": "uname -a",
+      "scope": "TV Kernel identification",
+      "exitCode": 0,
+      "resultSummary": "Linux LGwebOSTV 4.4.84-p.649.grampians.k5lp.1 armv7l"
+    },
+    {
+      "command": "cat /etc/starfish-release",
+      "scope": "webOS system release and build info",
+      "exitCode": 0,
+      "resultSummary": "Rockhopper 4.10.2-29 (goldilocks2-grampians) API 4.1.0 build 20250702083607"
+    },
+    {
+      "command": "nyx-cmd DeviceInfo query",
+      "scope": "Hardware model, RAM and serial number",
+      "exitCode": 0,
+      "resultSummary": "65UM7400PDA, 1.5 GB RAM, SoC Realtek RTD2870 k5lp"
+    },
+    {
+      "command": "strings /usr/lib/libcbe.so | grep -E 'Chrome/[0-9]+\\.[0-9]+' | head -n 5",
+      "scope": "Chromium engine version inspection",
+      "exitCode": 0,
+      "resultSummary": "Chrome/53.0.2785.34"
+    },
+    {
+      "command": "gst-inspect-1.0",
+      "scope": "GStreamer plugins and decoders",
+      "exitCode": 0,
+      "resultSummary": "GStreamer 1.14.1 with OpenMAX hardware decoders (h264, h265, vp9, ac3, ac4, dts, aac)"
+    },
+    {
+      "command": "ps -ef",
+      "scope": "Running processes and WebAppMgr inspection",
+      "exitCode": 0,
+      "resultSummary": "WebAppMgr PID 3325 with --remote-debugging-port=9998 and --js-flags=--ignition --noexpose_wasm"
+    },
+    {
+      "command": "cat /proc/meminfo",
+      "scope": "Memory budget inspection",
+      "exitCode": 0,
+      "resultSummary": "MemTotal 987348 kB, MemAvailable 370248 kB, CmaTotal 172032 kB"
+    },
+    {
+      "command": "cat /etc/umediaserver/umediaserver_resource_config.txt",
+      "scope": "Media server resource limits",
+      "exitCode": 0,
+      "resultSummary": "VDEC qty = 2, ADEC qty = 2, SVP_CPB qty = 2"
+    }
+  ],
+  "auditFindings": [
+    {
+      "id": "AUD-001",
+      "category": "Compatibility",
+      "severity": "Informative",
+      "title": "Strict Chromium 53 AST compat gate",
+      "location": "scripts/compat-gate.mjs",
+      "status": "Confirmed"
+    },
+    {
+      "id": "AUD-002",
+      "category": "Compatibility",
+      "severity": "Informative",
+      "title": "Node.js 0.12.2 compatibility shims",
+      "location": "bundled-service/src/compat.ts",
+      "status": "Confirmed"
+    },
+    {
+      "id": "AUD-003",
+      "category": "Multimedia",
+      "severity": "Medium",
+      "title": "GStreamer hlsdemux2 language rendition collapse",
+      "location": "src/components/player-tracks.ts",
+      "status": "Confirmed"
+    },
+    {
+      "id": "AUD-004",
+      "category": "Multimedia",
+      "severity": "Informative",
+      "title": "SoC hardware lack of AV1 decoder",
+      "location": "Device GStreamer OMX registry",
+      "status": "Confirmed"
+    },
+    {
+      "id": "AUD-005",
+      "category": "Performance",
+      "severity": "High",
+      "title": "Unbounded multi-day XMLTV memory hazard on 1GB RAM",
+      "location": "src/parsers/xmltv-parser.ts",
+      "status": "Confirmed"
+    },
+    {
+      "id": "AUD-006",
+      "category": "Performance",
+      "severity": "Low",
+      "title": "VirtualList TypedArray windowed DOM virtualization",
+      "location": "src/utils/virtual-list.ts",
+      "status": "Confirmed"
+    },
+    {
+      "id": "AUD-007",
+      "category": "Security",
+      "severity": "High",
+      "title": "Plaintext IPTV/Xtream credentials in localStorage",
+      "location": "src/services/storage-service.ts",
+      "status": "Confirmed"
+    },
+    {
+      "id": "AUD-008",
+      "category": "Security",
+      "severity": "Medium",
+      "title": "Plaintext subtitle API keys in localStorage",
+      "location": "src/services/storage-service.ts",
+      "status": "Confirmed"
+    },
+    {
+      "id": "AUD-009",
+      "category": "Security",
+      "severity": "Informative",
+      "title": "Salted SHA-256 Parental PIN with timing-safe comparison",
+      "location": "src/services/parental-pin.ts",
+      "status": "Confirmed"
+    },
+    {
+      "id": "AUD-010",
+      "category": "UI",
+      "severity": "Informative",
+      "title": "Dedicated Magic Remote pointer and cursor event handler",
+      "location": "src/navigation/key-handler.ts",
+      "status": "Confirmed"
+    },
+    {
+      "id": "AUD-011",
+      "category": "Environment",
+      "severity": "Medium",
+      "title": "Missing node_modules and @webos-tools/cli on PC host",
+      "location": "Local host environment",
+      "status": "Confirmed"
+    },
+    {
+      "id": "AUD-012",
+      "category": "Multimedia",
+      "severity": "Low",
+      "title": "Dual hardware video decoder limit (VDEC qty=2)",
+      "location": "umediaserver_resource_config.txt",
+      "status": "Confirmed"
+    }
+  ],
+  "auditLimitations": [
+    "No code or configuration modifications were performed on the repository or the TV, adhering strictly to read-only mode.",
+    "No IPK package installation was executed on the TV during this audit phase.",
+    "Testing was conducted via static AST/source review, configuration inspection, and non-intrusive live SSH device inspection."
+  ]
+}
+

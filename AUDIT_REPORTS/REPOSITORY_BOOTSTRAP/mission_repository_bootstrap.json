@@ -1,0 +1,67 @@
+{
+  "mission": "R0.1",
+  "title": "iCast Repository Governance & GitHub Bootstrap",
+  "project": "iCast",
+  "version": "1.17.0",
+  "timestamp": "2026-10-31T22:30:00Z",
+  "repository": {
+    "destination": "https://github.com/Maurxp/iCast.git",
+    "upstream": "https://github.com/lennylxx/webos-iptv-player.git",
+    "localWorkspace": "C:\\Users\\amaur\\Desktop\\webos-iptv-player",
+    "activeBranch": "fix/mission-2-2-stabilization",
+    "headCommit": "52b5dfaffa7db6207350d29b0ec5bad35f12915f"
+  },
+  "legal": {
+    "primaryLicense": "Apache-2.0",
+    "originalAuthor": "Lenny (lennylxx)",
+    "derivativeWorkAuthor": "iCast Contributors (Maurxp)",
+    "noticeFileCreated": true,
+    "licenseDualAttribution": true,
+    "thirdPartyNoticesPreserved": true
+  },
+  "platform": {
+    "targetDevice": "LG 65UM7400PDA",
+    "webos": "webOS TV Lite 4.10.2-29",
+    "chromium": "53.0.2785.34",
+    "node": "0.12.2",
+    "arch": "ARMv7 32-bit",
+    "soc": "Realtek RTD2870",
+    "appId": "com.lennylxx.iptv",
+    "appIdStatus": "PRESERVED_LEGACY"
+  },
+  "typescriptDiagnosticsAudit": {
+    "file": "src/components/settings.test.ts",
+    "statusInOfficialTypecheck": "EXCLUDED_BY_DESIGN (0 errors in npm run typecheck)",
+    "ideDiagnosticsFound": 23,
+    "rootCause": "tsconfig.json targets ES2018; tests use ES2022 Array.prototype.at and untyped vi.fn() mocks without tsconfig.test.json",
+    "m3_1Regressions": 0,
+    "remediation": "Introduce dedicated tsconfig.test.json extending tsconfig.json with ES2022 lib"
+  },
+  "governanceArtifacts": [
+    "LICENSE",
+    "NOTICE",
+    "README.md",
+    ".gitignore",
+    ".editorconfig",
+    "SECURITY.md",
+    "CODE_OF_CONDUCT.md",
+    "CHANGELOG.md",
+    ".github/PULL_REQUEST_TEMPLATE.md"
+  ],
+  "verificationGates": {
+    "typecheck": "PASS (0 errors)",
+    "stylelint": "PASS (0 errors)",
+    "eslint": "PASS (0 errors)",
+    "build": "PASS (Chromium-53 clean)",
+    "testsPassed": 3564,
+    "testsFailed": 0,
+    "testsSkipped": 5,
+    "gitDiffCheck": "PASS (0 errors)"
+  },
+  "publicationSafety": {
+    "pushExecuted": false,
+    "secretsFound": 0,
+    "status": "AWAITING_USER_AUTHORIZATION"
+  }
+}
+
