@@ -36,7 +36,7 @@ import { ChannelHealthService } from '../services/channel-health';
 import { createLogger } from '../utils/logger';
 import { t } from '../i18n';
 import { showToast } from './toast';
-import { PlayerPipeline, type PipelineManifest } from './player-pipeline';
+import { PlayerPipeline, type PipelineManifest, type PlaybackErrorReason } from './player-pipeline';
 import {
   PlaybackRateController,
   type PlaybackRate,
@@ -269,7 +269,19 @@ export class Player {
       if (this.liveSessionActive && !this.vod) this.rememberLiveAudio();
       update();
     });
-    onCurrent('error', () => this.onError(el.error?.code === 4 ? 'unsupported' : undefined));
+    onCurrent('error', () => {
+      const code = el.error?.code;
+      if (code === 1) {
+        log.info('Playback aborted on video element', 'event=playback.video.aborted', this.playbackLabel());
+        return;
+      }
+      const reason: PlaybackErrorReason | undefined =
+        code === 4 ? 'unsupported'
+        : code === 3 ? 'decode'
+        : code === 2 ? 'network'
+        : undefined;
+      this.onError(reason);
+    });
     // Resource selection starts here. Until then readyState/networkState still
     // describe the previous stream — on webOS the content-type probe can defer
     // the attach by up to MANIFEST_TIMEOUT — and recreateVideoEl() loads a
@@ -456,7 +468,11 @@ export class Player {
     fresh.volume = Number.isFinite(old.volume) ? old.volume : 1;
     fresh.playbackRate = Number.isFinite(old.playbackRate) ? old.playbackRate : 1;
     this.bindVideoEvents(fresh);
-    old.parentNode!.replaceChild(fresh, old);
+    if (old.parentNode) {
+      old.parentNode.replaceChild(fresh, old);
+    } else {
+      this.container.appendChild(fresh);
+    }
     this.videoEl = fresh;
     this.pipeline.setVideoElement(fresh);
     this.onPlaybackStateChanged();
@@ -1063,7 +1079,7 @@ export class Player {
     this.tracks.applyManifest(manifest);
   }
 
-  private onError(reason?: 'unsupported'): void {
+  private onError(reason?: PlaybackErrorReason): void {
     if (!this.playbackActive || this.wasPlayingBeforeHide) return;
     if (this.errorAdvanceTimer !== null) return;
     if (this.liveSessionActive) {
@@ -1121,8 +1137,9 @@ export class Player {
       v ? this.mediaState(v) : 'no video element',
       v?.error ? { code: v.error.code, message: v.error.message } : 'no error info',
       '| channel:', this.currentChannel?.name,
-      '| url:', diagnosticStreamUrl(v?.currentSrc || this.currentChannel?.url || ''));
-    if (this.liveSessionActive && !this.catchupInfo && reason !== 'unsupported') {
+      '| url:', diagnosticStreamUrl(v?.currentSrc || this.currentChannel?.url || ''),
+      `reason=${reason ?? 'unknown'}`);
+    if (this.liveSessionActive && !this.catchupInfo && reason !== 'unsupported' && reason !== 'http_error' && reason !== 'decode') {
       this.stallWatchdog.pause();
       this.errorRetryPending = true;
       this.livePlaybackStatus = 'buffering';
@@ -1138,7 +1155,10 @@ export class Player {
       return;
     }
     this.stallWatchdog.stop();
-    this.markLiveUnavailable('playback_error');
+    const healthFailureReason = reason === 'http_error' ? 'http_error'
+      : reason === 'decode' ? 'decode_error'
+      : 'playback_error';
+    this.markLiveUnavailable(healthFailureReason);
     this.osd.updateMessage(t('player.streamError'));
     this.errorAdvanceTimer = setTimeout(() => {
       this.errorAdvanceTimer = null;

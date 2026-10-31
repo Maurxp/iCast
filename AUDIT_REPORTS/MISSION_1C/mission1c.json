@@ -1,0 +1,101 @@
+{
+  "mission": "MISSION_1C",
+  "title": "Security Closure & Deployment Readiness",
+  "project": "webos-iptv-player",
+  "version": "1.17.0",
+  "date": "2026-10-29",
+  "branch": "fix/mission-1c-closure",
+  "targetHardware": {
+    "model": "LG 65UM7400PDA",
+    "webosVersion": "webOS TV Lite 4.10.2-29",
+    "webosApi": "4.1.0",
+    "chromiumVersion": "53.0.2785.34",
+    "nodeVersion": "0.12.2",
+    "architecture": "ARMv7 (32-bit)",
+    "soc": "Rockhopper / Realtek RTD2870",
+    "kernel": "Linux 4.4.84"
+  },
+  "lunaHardening": {
+    "failClosedEnforced": true,
+    "authorizedAppId": "com.lennylxx.iptv",
+    "rejectedVectors": [
+      "alien_app_id",
+      "absent_app_id",
+      "malformed_metadata",
+      "contradictory_claims",
+      "payload_spoofing",
+      "prefix_suffix_mimic"
+    ],
+    "methodsProtected": [
+      "start",
+      "getInfo",
+      "stop",
+      "serviceEvents",
+      "heartbeat"
+    ],
+    "justifiedExceptions": [
+      "fireReminderAlert (invoked by ActivityManager for air-time toast)",
+      "getDevMode (static boolean without credentials)"
+    ],
+    "dataMinimization": {
+      "start": ["returnValue", "running", "port", "appToken"],
+      "getInfo": ["returnValue", "running", "port", "ip", "manualUrl"],
+      "stop": ["returnValue", "stopped", "droppedSubscribers"],
+      "serviceEvents": ["event"]
+    }
+  },
+  "httpAndPairing": {
+    "infoEndpointSanitized": true,
+    "appTokenExposedInHttp": false,
+    "dosMitigationEnforced": true,
+    "blockedIpSpamDoesNotTriggerGlobalRotation": true,
+    "constantTimeStringComparison": true,
+    "pairingTtlMs": 900000,
+    "totalPinKeyspace": 10000
+  },
+  "secretHygiene": {
+    "appStartLogSanitized": true,
+    "playlistUrlLoggingSanitized": true,
+    "diagnosticRedactorActive": true,
+    "zeroSecretExposureConfirmed": true
+  },
+  "testResults": {
+    "testSuitesTotal": 153,
+    "testSuitesPassed": 153,
+    "testsTotalPassed": 3514,
+    "testsTotalSkipped": 5,
+    "testsTotalFailed": 0,
+    "exitCode": 0,
+    "windowsIssuesResolved": [
+      "scripts/eslint-focus-rules.test.mjs (CRLF stripping)",
+      "scripts/tv-input.test.mjs (NTFS permission mode tolerance)",
+      "scripts/tv-diag.test.mjs (POSIX shell mock conditional skip on win32)"
+    ]
+  },
+  "packagedArtifact": {
+    "filename": "com.lennylxx.iptv_1.17.0_all.ipk",
+    "relativePath": "AUDIT_REPORTS/MISSION_1C/package/com.lennylxx.iptv_1.17.0_all.ipk",
+    "appId": "com.lennylxx.iptv",
+    "version": "1.17.0",
+    "sizeBytes": 733376,
+    "sizeKb": 716.18,
+    "sha256": "EC561EDEACF1BC7B3D73C579A376785745879578F23C796A1A795F028B33D2BA",
+    "format": "ar archive v2 (ipkg / debian-binary + control.tar.gz + data.tar.gz)",
+    "totalTarEntries": 109,
+    "previewLibsExcluded": true,
+    "resourceValidationPassed": true
+  },
+  "zipArchive": {
+    "filename": "AUDIT_REPORTS/MISSION_1C/mission1c_closure.zip",
+    "sizeBytes": 2948739,
+    "sha256": "6AC0EBAE313E0331AF9B00757434A53223961809E50D018AAB9FC9AD6A8E7295",
+    "excludes": ["node_modules", ".git"]
+  },
+  "deploymentReadiness": {
+    "localVerificationComplete": true,
+    "readyForControlledInstallation": true,
+    "sshToTvExecutedDuringMission": false,
+    "physicalVerificationProtocolDocumented": true
+  },
+  "status": "COMPLETED"
+}

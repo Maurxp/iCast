@@ -33,9 +33,7 @@ npm run build
 
 # Compile the bundled service (TypeScript -> Node CommonJS)
 info "Building service..."
-rm -rf build/bundled-service
-npx tsc -p bundled-service/tsconfig.json
-node scripts/service-compat-gate.mjs build/bundled-service
+node scripts/build-service.mjs
 # Node.js 0.12.2 ships only as x64, so Apple Silicon needs Rosetta; without
 # it, leave the smoke to CI rather than block packaging.
 if [ "$(uname -sm)" = "Darwin arm64" ] && ! arch -x86_64 /usr/bin/true 2>/dev/null; then
@@ -44,9 +42,10 @@ if [ "$(uname -sm)" = "Darwin arm64" ] && ! arch -x86_64 /usr/bin/true 2>/dev/nu
 else
   node scripts/run-service-smoke.mjs
 fi
-cp bundled-service/package.json build/bundled-service/
-cp bundled-service/src/services.json build/bundled-service/
-cp bundled-service/src/setup/setup-page.html build/bundled-service/setup/
+
+# Validate package resources before ares-package execution
+info "Validating package resources before packaging..."
+node scripts/validate-package-resources.mjs dist build/bundled-service
 
 # Package IPK (--no-minify since esbuild already minifies)
 info "Packaging IPK..."
@@ -54,6 +53,10 @@ ares-package --no-minify -e "*preview-libs.js" dist build/bundled-service -o .
 
 IPK=$(ls -t *.ipk 2>/dev/null | head -1)
 info "Built: $IPK ($(du -h "$IPK" | cut -f1))"
+
+# Inspect and validate the generated IPK archive
+info "Validating packaged IPK archive..."
+node scripts/validate-package-resources.mjs --ipk "$IPK"
 
 info "Generating Homebrew Channel manifest..."
 npm run manifest -- "$IPK"

@@ -44,6 +44,21 @@ describe('streamUrlMime', () => {
     expect(streamUrlMime('http://host/a.mpd#f')).toBe(DASH);
   });
 
+  it('classifies an .mp4 or .m4v URL as MP4', () => {
+    expect(streamUrlMime('http://host/a.mp4')).toBe('video/mp4');
+    expect(streamUrlMime('http://host/a.MP4')).toBe('video/mp4');
+    expect(streamUrlMime('http://host/a.m4v')).toBe('video/mp4');
+    expect(streamUrlMime('http://host/a.M4V')).toBe('video/mp4');
+    expect(streamUrlMime('http://host/a.mp4?token=secret123&user=admin')).toBe('video/mp4');
+    expect(streamUrlMime('http://host/a.mp4#t=10,20')).toBe('video/mp4');
+    expect(streamUrlMime('http://host/path/video%20name.mp4?auth=xyz#section')).toBe('video/mp4');
+    expect(streamUrlMime('http://host/a?extension=mp4')).toBe('video/mp4');
+    expect(streamUrlMime('http://host/a?output=mp4')).toBe('video/mp4');
+    expect(streamUrlMime('http://host/a?output_format=m4v')).toBe('video/mp4');
+    expect(streamUrlMime('http://host/mp4/a')).toBe('');
+    expect(streamUrlMime('http://host/a.mp4.bak')).toBe('');
+  });
+
   it('classifies a requested mpd format as DASH', () => {
     expect(streamUrlMime('http://host/a?extension=mpd')).toBe(DASH);
     expect(streamUrlMime('http://host/a?x=1&output=mpd')).toBe(DASH);

@@ -11,6 +11,7 @@ import {
   parseUrl,
   secureRandomInt,
   stringEndsWith,
+  timingSafeEqualString,
 } from './compat';
 
 const tempDirs: string[] = [];
@@ -97,5 +98,16 @@ describe('service runtime compatibility', () => {
 
     expect(fs.statSync(nested).isDirectory()).toBe(true);
     expect(values.every(value => value >= 0 && value < 10000)).toBe(true);
+  });
+
+  it('performs constant-time string comparisons without early termination', () => {
+    expect(timingSafeEqualString('1234', '1234')).toBe(true);
+    expect(timingSafeEqualString('1234', '1235')).toBe(false);
+    expect(timingSafeEqualString('1234', '123')).toBe(false);
+    expect(timingSafeEqualString('123', '1234')).toBe(false);
+    expect(timingSafeEqualString('', '')).toBe(true);
+    expect(timingSafeEqualString('a', '')).toBe(false);
+    expect(timingSafeEqualString(null as unknown as string, '1234')).toBe(false);
+    expect(timingSafeEqualString('1234', undefined as unknown as string)).toBe(false);
   });
 });

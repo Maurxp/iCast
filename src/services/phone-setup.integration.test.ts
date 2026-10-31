@@ -14,15 +14,16 @@ let server: http.Server;
 let baseUrl: string;
 let setupToken: string;
 let dataDir: string;
+let result: import('../../bundled-service/src/lan/server').StartServerResult;
 
 beforeAll(async () => {
   dataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'phone-setup-test-'));
-  const result = await startServer(0, dataDir);
+  result = await startServer(0, dataDir);
   server = result.server;
   baseUrl = `http://127.0.0.1:${result.port}`;
-  setServicePort(result.port);
-  const info = (await (await fetch(`${baseUrl}/info`)).json()) as { setupUrl: string };
-  setupToken = new URL(info.setupUrl).search;
+  setServicePort(result.port, result.appToken);
+  const info = await SetupClient.getInfo();
+  setupToken = new URL(info!.setupUrl).search;
 });
 
 afterAll(async () => {
@@ -33,9 +34,15 @@ afterAll(async () => {
 
 beforeEach(async () => {
   localStorage.clear();
-  const actions = (await (await fetch(`${baseUrl}/setup-actions`)).json()) as Array<{ id: number }>;
+  const res = await fetch(`${baseUrl}/setup-actions`, {
+    headers: { Authorization: `Bearer ${result.appToken}` },
+  });
+  const actions = (await res.json()) as Array<{ id: number }>;
   for (const action of actions) {
-    await fetch(`${baseUrl}/setup-actions/${action.id}`, { method: 'DELETE' });
+    await fetch(`${baseUrl}/setup-actions/${action.id}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${result.appToken}` },
+    });
   }
 });
 
@@ -108,7 +115,9 @@ describe('phone setup synchronization', () => {
         tokenTs: 0,
       },
     });
-    expect(await (await fetch(`${baseUrl}/setup-actions`)).json()).toEqual([]);
+    expect(await (await fetch(`${baseUrl}/setup-actions`, {
+      headers: { Authorization: `Bearer ${result.appToken}` },
+    })).json()).toEqual([]);
 
     const state = await (await fetch(`${baseUrl}/setup-state${setupToken}`)).json();
     expect(state).toEqual({

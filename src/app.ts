@@ -501,8 +501,13 @@ class App {
       lunaRequest(`luna://${CONFIG.SERVICE_ID}`, {
         method: 'stop',
         parameters: {},
-        onSuccess: (resp: unknown) => log.info('Bundled service stop onSuccess:', JSON.stringify(resp)),
-        onFailure: (err: unknown) => log.warn('Bundled service stop onFailure:', JSON.stringify(err)),
+        onSuccess: () => log.info('Bundled service stop onSuccess'),
+        onFailure: (err: unknown) => {
+          const errText = (err && typeof err === 'object' && 'errorText' in err)
+            ? String((err as { errorText: unknown }).errorText)
+            : 'unknown error';
+          log.warn('Bundled service stop onFailure:', errText);
+        },
       });
     } catch (e) {
       log.warn('stopBundledService threw:', e);
@@ -554,11 +559,19 @@ class App {
               finish(false, 'stopped after app hidden');
               return;
             }
-            if (resp && typeof resp === 'object' && 'port' in resp) {
-              const p = (resp as { port?: unknown }).port;
-              if (typeof p === 'number') setServicePort(p);
+            let p: number | null = null;
+            let token: string | null = null;
+            let running = false;
+            if (resp && typeof resp === 'object') {
+              const r = resp as { port?: unknown; appToken?: unknown; running?: unknown };
+              if (typeof r.port === 'number') p = r.port;
+              if (typeof r.appToken === 'string') token = r.appToken;
+              if (typeof r.running === 'boolean') running = r.running;
+              if (p !== null) {
+                setServicePort(p, token);
+              }
             }
-            log.info('Bundled service start onSuccess:', JSON.stringify(resp));
+            log.info('Bundled service start onSuccess: running=' + running + ', port=' + p + ', hasToken=' + Boolean(token));
             finish(true, 'onSuccess');
             if (lateSuccess) {
               void this.finishBundledServiceInit()
@@ -567,7 +580,10 @@ class App {
           },
           onFailure: (err: unknown) => {
             clearTimeout(timer);
-            log.error('Bundled service start onFailure:', JSON.stringify(err));
+            const errObj = (err && typeof err === 'object' && 'errorText' in err)
+              ? String((err as { errorText: unknown }).errorText)
+              : 'unknown error';
+            log.error('Bundled service start onFailure:', errObj);
             finish(false, 'onFailure');
           },
         });
@@ -690,7 +706,10 @@ class App {
         subscribe: true,
         parameters: {},
         onSuccess: (resp: unknown) => {
-          log.info('serviceEvents push:', JSON.stringify(resp));
+          const evt = (resp && typeof resp === 'object' && 'event' in resp)
+            ? String((resp as { event: unknown }).event)
+            : (resp && typeof resp === 'object' && (resp as { subscribed?: unknown }).subscribed ? 'subscribed' : 'unknown');
+          log.info('serviceEvents push: event=' + evt);
           if (resp && typeof resp === 'object' &&
               (resp as { subscribed?: unknown }).subscribed === true) return;
           if (resp && typeof resp === 'object' &&
@@ -703,7 +722,10 @@ class App {
             .catch(err => log.error('Upload event refresh failed:', err));
         },
         onFailure: (err: unknown) => {
-          log.warn('serviceEvents subscription failed:', JSON.stringify(err));
+          const errText = (err && typeof err === 'object' && 'errorText' in err)
+            ? String((err as { errorText: unknown }).errorText)
+            : 'unknown error';
+          log.warn('serviceEvents subscription failed:', errText);
         },
       });
     } catch (e) {

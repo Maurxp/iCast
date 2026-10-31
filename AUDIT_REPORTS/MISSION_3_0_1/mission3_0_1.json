@@ -1,0 +1,99 @@
+{
+  "mission": "M3.0.1",
+  "title": "iCast — Visual Identity Refinement & Design System (Obsidian & Porcelain)",
+  "version": "1.17.0",
+  "date": "2026-10-31",
+  "device": {
+    "model": "LG 65UM7400PDA",
+    "webos_version": "webOS TV Lite 4.10.2-29",
+    "firmware": "05.40.97",
+    "soc": "Realtek RTD2870 (K5LP)",
+    "architecture": "ARMv7 32-bit Quad-Core",
+    "total_ram_kb": 987348,
+    "chromium_version": "53.0.2785.34"
+  },
+  "brand": {
+    "name": "iCast",
+    "app_id": "com.lennylxx.iptv",
+    "tagline": "Televisión en su Estado Más Puro",
+    "philosophy": "Content Primacy & Mineral Neutrality",
+    "logo_concept_alternatives": {
+      "concept_a": {
+        "name": "Prisma Minimalista",
+        "description": "3 facetas de luz mineral con plano central en titanio cálido (#C8BFAF).",
+        "svg_file": "prototypes/assets/logo_concept_a_minimalist.svg",
+        "score": 8.97
+      },
+      "concept_b": {
+        "name": "Prisma Monocromático",
+        "description": "4 cuadrantes facetados en platino y grafito. Cero tinte cromático, máxima nitidez en 16px.",
+        "svg_file": "prototypes/assets/logo_concept_b_monochrome.svg",
+        "score": 9.59
+      },
+      "concept_c": {
+        "name": "Prisma con Refracción Sutil",
+        "description": "Cuerpo mineral con haces de luz espectral de temperatura dual (ámbar y cuarzo frío).",
+        "svg_file": "prototypes/assets/logo_concept_c_subtle_refraction.svg",
+        "score": 8.69
+      }
+    }
+  },
+  "color_system": {
+    "palette_obsidian": {
+      "bg_base": "#101114",
+      "surface_primary": "#191A1F",
+      "surface_secondary": "#24262B",
+      "surface_elevated": "#2D3037",
+      "text_primary": "#EDEDEF",
+      "text_secondary": "#A5A6AC",
+      "text_muted": "#70727A",
+      "accent_neutral": "#C8BFAF",
+      "contrast_primary_ratio": "14.8:1 (AAA)"
+    },
+    "palette_porcelain": {
+      "bg_base": "#F3F2EF",
+      "surface_primary": "#FFFFFF",
+      "surface_secondary": "#E8E7E3",
+      "surface_elevated": "#FFFFFF",
+      "text_primary": "#252629",
+      "text_secondary": "#777873",
+      "text_muted": "#A1A29D",
+      "accent_neutral": "#A99476",
+      "contrast_primary_ratio": "14.2:1 (AAA)"
+    },
+    "focus_system": {
+      "type": "Dual Neutral Ring & 3D Surface Micro-Elevation",
+      "scale": 1.03,
+      "inner_ring": "2px background-matched optical canal",
+      "outer_ring": "2px #EDEDEF (Obsidian) / #252629 (Porcelain)",
+      "neon_blue_eliminated": true
+    }
+  },
+  "liquid_glass_system": {
+    "discipline": "Strict Apple HIG Two-Layer Separation",
+    "content_layer": "100% Opaque mineral surfaces (zero glass on cards or lists)",
+    "functional_layer": {
+      "level_1_base": "Solid opaque surfaces with 1px subtle border",
+      "level_2_translucent": "TabBar (92% opacity, 1px hairline border, subtle 180deg gradient)",
+      "level_3_prominent": "Player OSD HUD & Modals (85% opacity, specular rim, layered shadows)"
+    },
+    "chromium_53_compatibility": "Native optical simulation (no dynamic backdrop blur required)"
+  },
+  "performance_budget": {
+    "baseline_measured_rss_mb": 107.8,
+    "max_rss_limit_mb": 120.0,
+    "baseline_measured_idle_cpu": "< 0.5%",
+    "max_idle_cpu_limit": "1.0%",
+    "unproven_m3_claims_corrected": true
+  },
+  "deliverables": {
+    "documents_count": 13,
+    "prototype_files_count": 8,
+    "screenshots_count": 6,
+    "checksum_file": "CHECKSUMS.sha256"
+  },
+  "production_code_modified": false,
+  "tv_interaction_conducted": false,
+  "readiness_verdict": "READY_FOR_USER_EVALUATION"
+}
+

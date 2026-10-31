@@ -1,0 +1,271 @@
+{
+  "mission": 0,
+  "title": "PREPARACIÓN DEL ENTORNO Y BASELINE DE RENDIMIENTO",
+  "project": "lennylxx/webos-iptv-player",
+  "version": "1.17.0",
+  "generatedAt": "2026-10-29T20:23:00.000Z",
+  "status": "COMPLETED",
+  "targetDevice": {
+    "manufacturer": "LG Electronics",
+    "model": "65UM7400PDA",
+    "platformCode": "k5lp / K5LP_DVB",
+    "soc": "Realtek RTD2870",
+    "cpuArchitecture": "ARMv7 (v7l) 32-bit",
+    "cpuCores": 4,
+    "kernel": "Linux 4.4.84-p.649.grampians.k5lp.1 armv7l",
+    "webOsVersion": "webOS TV Lite 4.10.2-29",
+    "webOsApi": "4.1.0",
+    "browserEngine": "Chromium 53.0.2785.34",
+    "v8Flags": ["--ignition", "--noexpose_wasm"],
+    "nodeVersionOnDevice": "v0.12.2",
+    "memoryProfile": {
+      "physicalRam": "1.5 GB",
+      "memTotalKb": 987144,
+      "memFreeKb": 22464,
+      "memAvailableKb": 370120,
+      "swapTotalKb": 716796,
+      "swapFreeKb": 685000
+    },
+    "ipAddress": "192.168.1.8",
+    "hardwareDecoders": [
+      "omxh264dec",
+      "omxh265dec",
+      "omxvp9dec",
+      "omxmpegvideodec",
+      "omxac3dec",
+      "omxac4dec",
+      "omxdtsdec",
+      "omxaacdec"
+    ],
+    "hardwareLimits": {
+      "maxVideoDecoders": 2,
+      "av1HardwareSupport": false,
+      "wasmSupport": false
+    }
+  },
+  "hostEnvironment": {
+    "os": "Windows 11 Pro x64 (Build 26100)",
+    "node": "v24.18.0",
+    "npm": "11.16.0",
+    "git": "2.55.0.windows.3",
+    "python": "3.14.6",
+    "gitBranch": "baseline/mission-0",
+    "baseCommit": "52b5dfa",
+    "untrackedDirectory": "AUDIT_REPORTS"
+  },
+  "buildAndValidationResults": {
+    "npm_ci": {
+      "status": "PASSED",
+      "exitCode": 0,
+      "packagesAdded": 317,
+      "vulnerabilities": 0
+    },
+    "typecheck_app": {
+      "command": "npm run typecheck",
+      "status": "PASSED",
+      "exitCode": 0
+    },
+    "typecheck_service": {
+      "command": "npm run service:typecheck",
+      "status": "PASSED",
+      "exitCode": 0
+    },
+    "typecheck_benchmark": {
+      "command": "npm run benchmark:typecheck",
+      "status": "PASSED",
+      "exitCode": 0
+    },
+    "lint_and_compat": {
+      "command": "npm run lint",
+      "status": "PASSED",
+      "exitCode": 0,
+      "stylelintLegacyGate": "PASSED",
+      "eslintCompatFloor": "Chromium 53 Verified"
+    },
+    "esbuild_bundle": {
+      "command": "npm run build",
+      "status": "PASSED",
+      "exitCode": 0,
+      "outputNotice": "Compat gate: app, worker and Shaka bundles are Chromium-53 clean. Build complete."
+    },
+    "unit_integration_tests": {
+      "command": "npm test (vitest run)",
+      "status": "PARTIAL",
+      "exitCode": 1,
+      "totalTestFiles": 149,
+      "passedTestFiles": 145,
+      "failedTestFiles": 4,
+      "totalTests": 3410,
+      "passedTests": 3402,
+      "failedTests": 4,
+      "skippedTests": 4,
+      "failureRootCauses": [
+        "scripts/css-transforms.test.mjs: Windows CRLF vs LF comparison",
+        "scripts/eslint-focus-rules.test.mjs: Regex dollar anchor fails on CRLF trailing carriage return",
+        "scripts/tv-diag.test.mjs: Hardcoded /bin/sh absent on Windows",
+        "scripts/tv-input.test.mjs: POSIX octal mode 0o600 check returns 438 on NTFS"
+      ],
+      "applicationSrcPassRate": "100%"
+    },
+    "service_smoke_test": {
+      "command": "npm run service:smoke",
+      "status": "BLOCKED",
+      "exitCode": 1,
+      "reasons": [
+        "service:build relies on Unix rm -rf in cmd.exe",
+        "scripts/run-service-smoke.mjs explicit OS check rejects win32"
+      ]
+    },
+    "playwright_e2e": {
+      "command": "npx playwright test",
+      "status": "EVALUATED_NOT_VIABLE",
+      "exitCode": 1,
+      "testsIdentified": 1014,
+      "reason": "Playwright chromium headless shell binary not installed"
+    },
+    "desktop_benchmark": {
+      "command": "npm run benchmark",
+      "status": "EVALUATED_NOT_VIABLE",
+      "reason": "Shares Playwright test runner with missing browser binary"
+    }
+  },
+  "tvDiagnosticInfrastructure": {
+    "toolsAnalyzed": [
+      "scripts/tv.sh",
+      "scripts/cdp-client.mjs",
+      "scripts/tv-diag.mjs",
+      "scripts/tv-perf.mjs",
+      "scripts/tv-capt.mjs",
+      "scripts/tv-input.mjs",
+      "benchmarks/tv-runner.mjs"
+    ],
+    "accessChannels": {
+      "ssh_administrative_port_22": {
+        "status": "ACTIVE",
+        "protocol": "OpenSSH 7.2p2",
+        "user": "root",
+        "scope": "Strictly Read-Only Verified"
+      },
+      "ssh_devmode_port_9922": {
+        "status": "INACTIVE",
+        "reason": "Homebrew Channel in use instead of LG Developer Mode app"
+      },
+      "adb_channel": {
+        "status": "NON_EXISTENT",
+        "reason": "webOS is an embedded Linux/Yocto platform; ADB does not apply"
+      },
+      "devtools_cdp_port_9998": {
+        "status": "SUPPORTED_NOT_EXPOSED",
+        "endpoint": "http://192.168.1.8:9998/json/list",
+        "reason": "com.lennylxx.iptv is not currently running"
+      },
+      "luna_bus": {
+        "status": "ACTIVE",
+        "daemon": "ls-hubd",
+        "access": "luna-send locally or window.PalmServiceBridge from web runtime"
+      }
+    }
+  },
+  "baselinePlan": {
+    "currentBaselineFile": "benchmarks/tv-baseline.json",
+    "currentBaselineDevice": "OLED77C5PUA.DUSQLJR (Chromium 120, webOS 10.3.1)",
+    "applicabilityToTarget": false,
+    "targetBaselineFile": "benchmarks/tv-baseline-65um7400.json",
+    "riskEvaluation": {
+      "defaultScale": 50000,
+      "riskLevel": "HIGH (Kernel OOM Killer termination of WebAppMgr)",
+      "recommendedScale": 5000,
+      "scaleTiers": [
+        { "name": "Nivel 1 (Calibración)", "scale": 5000, "estimatedHeapMb": 45 },
+        { "name": "Nivel 2 (Estándar TV)", "scale": 15000, "estimatedHeapMb": 95 },
+        { "name": "Nivel 3 (Estrés Máximo)", "scale": 30000, "estimatedHeapMb": 180 }
+      ]
+    },
+    "backupAndRestoreSafety": {
+      "backupStorage": "IndexedDB user-meta",
+      "backupKey": "__tv_benchmark_backup__",
+      "backedUpStores": [
+        "localStorage",
+        "playlist-cache",
+        "cache-meta",
+        "recently-watched",
+        "playback-progress",
+        "parental-control"
+      ],
+      "safetyGuards": "Aborts immediately if previous backup exists"
+    }
+  },
+  "blockersRegister": [
+    {
+      "id": "B-01",
+      "name": "Missing @webos-tools/cli on host",
+      "severity": "MEDIUM",
+      "status": "MITIGATED",
+      "solution": "Pass explicit --host 192.168.1.8 --port 9998 to Node diagnostic tools"
+    },
+    {
+      "id": "B-02",
+      "name": "tv.sh bash/expect dependency",
+      "severity": "MEDIUM",
+      "status": "MITIGATED",
+      "solution": "Use PuTTY plink.exe for SSH commands and direct Node scripts for CDP"
+    },
+    {
+      "id": "B-03",
+      "name": "service:smoke unsupported on win32",
+      "severity": "LOW",
+      "status": "MITIGATED",
+      "solution": "Validate bundled-service on native /usr/bin/node v0.12.2 on the TV"
+    },
+    {
+      "id": "B-04",
+      "name": "Playwright browser binaries not installed",
+      "severity": "MEDIUM",
+      "status": "PENDING_APPROVAL",
+      "solution": "Execute npx playwright install chromium when authorized"
+    },
+    {
+      "id": "B-05",
+      "name": "4 Vitest failures due to Windows CRLF/POSIX differences",
+      "severity": "LOW",
+      "status": "DOCUMENTED",
+      "solution": "Application src code is 100% clean; tests pass under Linux/WSL2"
+    },
+    {
+      "id": "B-06",
+      "name": "com.lennylxx.iptv not installed on TV",
+      "severity": "HIGH",
+      "status": "PENDING_AUTHORIZATION",
+      "solution": "Awaiting user approval to build and install IPK in next phase"
+    },
+    {
+      "id": "B-07",
+      "name": "Strict free RAM on TV (~370 MB available)",
+      "severity": "HIGH",
+      "status": "MITIGATED",
+      "solution": "Calibrate BENCHMARK_SCALE=5000 to prevent OOM crash"
+    },
+    {
+      "id": "B-08",
+      "name": "WASM physically disabled on TV",
+      "severity": "ARCHITECTURAL",
+      "status": "ENFORCED",
+      "solution": "Pure ES5/Chromium-53 JavaScript only"
+    },
+    {
+      "id": "B-09",
+      "name": "VDEC qty = 2 limit",
+      "severity": "MULTIMEDIA",
+      "status": "ENFORCED",
+      "solution": "Constrain simultaneous video pipelines to 2"
+    },
+    {
+      "id": "B-10",
+      "name": "No hardware AV1 decoder",
+      "severity": "MULTIMEDIA",
+      "status": "ENFORCED",
+      "solution": "Reject/filter AV1 streams to prevent CPU saturation"
+    }
+  ]
+}
+

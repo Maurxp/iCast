@@ -360,7 +360,7 @@ describe('diagnostic report assembly', () => {
     });
   });
 
-  it('bounds native previews when the server ignores Range', () => {
+  it.skipIf(process.platform === 'win32')('bounds native previews when the server ignores Range', () => {
     const bin = mkdtempSync(path.join(tmpdir(), 'tv-diag-native-'));
     try {
       writeFileSync(path.join(bin, 'node'), '#!/bin/sh\nprintf 12\n', { mode: 0o755 });

@@ -144,4 +144,12 @@ writeThirdPartyNotices({
   metafiles: bundled.map(({ metafile }) => metafile),
 });
 
+if (!isPreview) {
+  const { validatePackageResources } = await import('./scripts/validate-package-resources.mjs');
+  const validation = validatePackageResources('dist', null);
+  if (!validation.valid) {
+    throw new Error('Package resource validation failed:\n' + validation.errors.map((e) => `  - ${e}`).join('\n'));
+  }
+}
+
 console.log('Build complete.');

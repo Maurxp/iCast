@@ -53,6 +53,7 @@ import {
   type XtreamGroupNameFilter,
 } from '../utils/xtream-category-filter';
 import { liveParentalRequest, ParentalControlService } from './parental-control';
+import { diagnosticStreamUrl } from '../utils/url';
 
 const log = createLogger('Playlist');
 
@@ -213,7 +214,7 @@ class PlaylistServiceImpl {
       );
       this.liveCategoryNotices.push({
         playlistId: pl.id,
-        accountName: pl.name || pl.url,
+        accountName: pl.name || diagnosticStreamUrl(pl.url),
         count: unannounced.length,
       });
     }
@@ -435,7 +436,7 @@ class PlaylistServiceImpl {
           xtreamOutput,
         );
       }
-      const plDone = log.time(`fetch '${pl.name || pl.url}'`);
+      const plDone = log.time(`fetch '${pl.name || diagnosticStreamUrl(pl.url)}'`);
       try {
         let parsed: ParsedPlaylist | null = null;
         let playlistError: unknown;
@@ -583,13 +584,13 @@ class PlaylistServiceImpl {
         );
         if (pl.source === 'xtream') {
           log.error(
-            `Failed to load Xtream playlist '${pl.name || pl.url}'`,
+            `Failed to load Xtream playlist '${pl.name || diagnosticStreamUrl(pl.url)}'`,
             'event=xtream.playlist.load.failed',
             `load=${String(load)}`,
             err,
           );
         } else {
-          log.error(`Failed to load playlist '${pl.name || pl.url}':`, err);
+          log.error(`Failed to load playlist '${pl.name || diagnosticStreamUrl(pl.url)}':`, err);
         }
       }
       completedProcessed += sourceProcessed;

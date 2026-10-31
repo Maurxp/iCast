@@ -113,6 +113,18 @@ function isPermanentShakaLicenseError(error: unknown, shaka: ShakaNamespace): bo
   return status === 401 || status === 403;
 }
 
+function safePlay(videoEl: HTMLVideoElement | null, onReject?: (e: unknown) => void): void {
+  if (!videoEl) return;
+  try {
+    const p = videoEl.play() as Promise<void> | undefined;
+    if (p?.catch) {
+      p.catch(e => onReject?.(e));
+    }
+  } catch (e) {
+    onReject?.(e);
+  }
+}
+
 export interface PipelineManifest {
   audio: ManifestAudio[];
   subtitles: ManifestSubtitle[];
@@ -121,11 +133,20 @@ export interface PipelineManifest {
   masterUrl: string;
 }
 
+export type PlaybackErrorReason = 'unsupported' | 'http_error' | 'network' | 'decode' | 'timeout';
+
+export interface ContentTypeResult {
+  ok: boolean;
+  contentType: string;
+  status?: number;
+  errorReason?: PlaybackErrorReason | 'aborted';
+}
+
 export interface PlayerPipelineOptions {
   playbackLabel: (loadToken: number) => string;
   mediaState: (video: HTMLVideoElement) => string;
   isCatchup: () => boolean;
-  onError: (reason?: 'unsupported') => void;
+  onError: (reason?: PlaybackErrorReason) => void;
   onAudioTracksUpdated: () => void;
   onSubtitleTracksUpdated: () => void;
   onManifest: (manifest: PipelineManifest) => void;
@@ -142,6 +163,7 @@ export class PlayerPipeline {
   private hlsRecoveries = 0;
   private manifestSeq = 0;
   private manifestController: AbortController | null = null;
+  private classifyController: AbortController | null = null;
   private videoLoadLabels = new WeakMap<HTMLVideoElement, string>();
   private playReadyDrm = new PlayReadyDrm();
   private activeDrm = '';
@@ -196,6 +218,7 @@ export class PlayerPipeline {
     const token = ++this.loadToken;
     const label = this.callbacks.playbackLabel(token);
     this.cancelManifest();
+    this.cancelClassify();
     this.destroyLoaders();
     this.videoLoadLabels.set(videoEl, label);
     this.playReadyDrm.release();
@@ -248,6 +271,7 @@ export class PlayerPipeline {
     if (!videoEl) return;
     const safeUrl = diagnosticStreamUrl(url);
     const urlMime = streamUrlMime(url);
+    const isMp4Url = urlMime === 'video/mp4';
     const isTsUrl = urlMime === 'video/mp2t';
     const isFlvUrl = urlMime === 'video/x-flv';
     const isHlsUrl = urlMime === 'application/vnd.apple.mpegurl';
@@ -266,10 +290,11 @@ export class PlayerPipeline {
         this.playNative(url, mime);
         return;
       }
-      if (isTsUrl || isFlvUrl || isHlsUrl || isDashUrl) {
+      if (isTsUrl || isFlvUrl || isHlsUrl || isDashUrl || isMp4Url) {
         const mime = isFlvUrl ? 'video/x-flv'
           : isTsUrl ? 'video/mp2t'
           : isDashUrl ? 'application/dash+xml'
+          : isMp4Url ? 'video/mp4'
           : 'application/vnd.apple.mpegurl';
         log.info('Selected webOS native playback', 'event=playback.path.native',
           this.callbacks.playbackLabel(token),
@@ -303,8 +328,26 @@ export class PlayerPipeline {
           this.playNativeMime(url, cachedMime);
           return;
         }
-        void this.detectContentType(url, token).then(contentType => {
+        void this.detectContentType(url, token).then(result => {
           if (token !== this.loadToken || !this.videoEl) return;
+          if (!result.ok) {
+            if (result.errorReason === 'aborted') return;
+            if (result.errorReason === 'http_error') {
+              log.warn('Aborting webOS playback due to HTTP error',
+                'event=playback.http_error',
+                this.callbacks.playbackLabel(token),
+                `status=${result.status ?? 0}`,
+                'url=', safeUrl);
+              this.callbacks.onError('http_error');
+              return;
+            }
+            log.warn('Content-type probe failed, attempting native playback with sniffed MIME',
+              'event=playback.probe.fallback',
+              this.callbacks.playbackLabel(token));
+            this.playNativeMime(url, '');
+            return;
+          }
+          const contentType = result.contentType;
           const mime = streamMime(contentType);
           if (routeKey && contentType &&
               contentType.split(';')[0].trim() !== 'application/octet-stream') {
@@ -336,18 +379,32 @@ export class PlayerPipeline {
         this.callbacks.playbackLabel(token),
         'reason=direct', 'url=', safeUrl, '| desktop direct VOD');
       videoEl.src = url;
-      videoEl.play().catch(e => log.warn('Direct play() rejected',
+      safePlay(videoEl, e => log.warn('Direct play() rejected',
         'event=playback.play.rejected',
         this.callbacks.playbackLabel(token), 'path=direct', e));
       return;
     }
-    void this.detectContentType(url, token).then(ct => {
+    void this.detectContentType(url, token).then(result => {
       if (token !== this.loadToken || !this.videoEl) return;
+      if (!result.ok) {
+        if (result.errorReason === 'aborted') return;
+        if (result.errorReason === 'http_error') {
+          log.warn('Aborting desktop playback due to HTTP error',
+            'event=playback.http_error',
+            this.callbacks.playbackLabel(token),
+            `status=${result.status ?? 0}`,
+            'url=', safeUrl);
+          this.callbacks.onError('http_error');
+          return;
+        }
+      }
+      const ct = result.ok ? result.contentType : '';
+      const isMp4 = isMp4Url || ct === 'video/mp4' || ct === 'video/m4v';
       const isFlv = isFlvUrl || ct.includes('flv');
       const isTs = isTsUrl || ct.includes('mp2t');
       const isDash = !isTs && !isFlv &&
         (isDashUrl || ct.includes('dash+xml') || ct.includes('dash.mpd'));
-      const isDirect = !isTs && !isFlv && !isDash && /^(?:video|audio)\//.test(ct);
+      const isDirect = !isTs && !isFlv && !isDash && (isMp4 || /^(?:video|audio)\//.test(ct));
       const isHls = !isTs && !isFlv && !isDash && !isDirect;
       log.info('loadStream', this.callbacks.playbackLabel(token), 'url=', safeUrl,
         '| content-type:', ct || '(none)', '| catchup:', this.callbacks.isCatchup(),
@@ -378,7 +435,7 @@ export class PlayerPipeline {
           this.callbacks.playbackLabel(token),
           'reason=probe');
         this.videoEl.src = url;
-        this.videoEl.play().catch(e => log.warn('Direct play() rejected',
+        safePlay(this.videoEl, e => log.warn('Direct play() rejected',
           'event=playback.play.rejected',
           this.callbacks.playbackLabel(token), 'path=direct', e));
       } else {
@@ -396,6 +453,7 @@ export class PlayerPipeline {
     // final guard against restarting playback after stop/suspend.
     this.loadToken++;
     this.cancelManifest();
+    this.cancelClassify();
     this.destroyLoaders();
     this.playReadyDrm.release();
     this.activeDrm = '';
@@ -441,16 +499,42 @@ export class PlayerPipeline {
     }
   }
 
+  private cancelClassify(): void {
+    if (this.classifyController) {
+      this.classifyController.abort();
+      this.classifyController = null;
+    }
+  }
+
   // Classify a stream by the server's Content-Type — URL extensions are
   // unreliable for proxied/extension-less streams, so the response header is the
   // real signal. Headers are enough, so cancel the body. Returns '' on a
   // CORS/network failure, leaving the caller on its URL heuristic (default HLS).
-  private async detectContentType(url: string, loadToken: number): Promise<string> {
+  private async detectContentType(url: string, loadToken: number): Promise<ContentTypeResult> {
     const controller = new AbortController();
+    this.cancelClassify();
+    this.classifyController = controller;
     const timer = setTimeout(() => controller.abort(), CONFIG.PLAYER.MANIFEST_TIMEOUT);
     let reader: ReadableStreamDefaultReader<Uint8Array> | null = null;
+    const safeUrl = diagnosticStreamUrl(url);
     try {
       const res = await fetch(url, { signal: controller.signal });
+      const isHttpError = typeof res.status === 'number'
+        ? res.status >= 400
+        : (res.ok === false && typeof res.status !== 'undefined');
+      if (isHttpError) {
+        res.body?.cancel().catch(() => {});
+        log.warn('Content-type HTTP error', 'event=playback.classify.http_error',
+          this.callbacks.playbackLabel(loadToken),
+          `status=${res.status}`,
+          'url=', safeUrl);
+        return {
+          ok: false,
+          contentType: '',
+          status: res.status,
+          errorReason: 'http_error',
+        };
+      }
       const ct = (res.headers.get('content-type') || '').toLowerCase();
       const baseType = ct.split(';')[0].trim();
       const sniffBody = baseType === 'application/octet-stream'
@@ -458,10 +542,10 @@ export class PlayerPipeline {
         || baseType === 'text/xml';
       if (!sniffBody) {
         res.body?.cancel().catch(() => {});
-        return ct;
+        return { ok: true, contentType: ct, status: res.status };
       }
       reader = res.body?.getReader() ?? null;
-      if (!reader) return ct;
+      if (!reader) return { ok: true, contentType: ct, status: res.status };
       const chunks: Uint8Array[] = [];
       let length = 0;
       while (length < 4096) {
@@ -477,15 +561,29 @@ export class PlayerPipeline {
         prefix.set(chunk, offset);
         offset += chunk.length;
       }
-      return sniffStreamContentType(ct, prefix);
+      const sniffed = sniffStreamContentType(ct, prefix);
+      return { ok: true, contentType: sniffed, status: res.status };
     } catch (error) {
+      if (loadToken !== this.loadToken || (error instanceof Error && error.name === 'AbortError' && loadToken !== this.loadToken)) {
+        log.info('Content-type classification cancelled', 'event=playback.classify.cancelled',
+          this.callbacks.playbackLabel(loadToken));
+        return { ok: false, contentType: '', errorReason: 'aborted' };
+      }
+      if (error instanceof Error && error.name === 'AbortError') {
+        log.warn('Content-type classification timed out', 'event=playback.classify.timeout',
+          this.callbacks.playbackLabel(loadToken),
+          'url=', safeUrl);
+        return { ok: false, contentType: '', errorReason: 'timeout' };
+      }
       log.warn('Content-type classification failed', 'event=playback.classify.failed',
         this.callbacks.playbackLabel(loadToken),
-        error instanceof Error ? error.name : 'Error');
-      return '';
+        error instanceof Error ? error.name : 'Error',
+        'url=', safeUrl);
+      return { ok: false, contentType: '', errorReason: 'network' };
     } finally {
       if (reader) void reader.cancel().catch(() => {});
       clearTimeout(timer);
+      if (this.classifyController === controller) this.classifyController = null;
     }
   }
 
@@ -600,7 +698,7 @@ export class PlayerPipeline {
     if (mime) source.type = mime;
     videoEl.appendChild(source);
     videoEl.load();
-    videoEl.play().catch(e => log.warn('Native play() rejected',
+    safePlay(videoEl, e => log.warn('Native play() rejected',
       'event=playback.play.rejected',
       this.videoLabel(videoEl), 'path=native', this.callbacks.mediaState(videoEl), e));
   }
@@ -618,7 +716,7 @@ export class PlayerPipeline {
             'event=playback.path.direct', this.callbacks.playbackLabel(loadToken),
             'reason=hls-unsupported');
         this.videoEl.src = url;
-        this.videoEl.play().catch(() => {});
+        safePlay(this.videoEl);
         return;
       }
       const hlsConfig: Record<string, unknown> = {
@@ -650,7 +748,7 @@ export class PlayerPipeline {
         log.info('hls.js manifest parsed; starting playback',
           'event=playback.manifest.parsed', this.callbacks.playbackLabel(loadToken),
           'path=hls');
-        this.videoEl?.play().catch(e => log.warn('hls play() rejected:', e));
+        safePlay(this.videoEl, e => log.warn('hls play() rejected:', e));
       });
       // A good fragment played: the stream recovered, so refill the retry budget.
       hls.on(Hls.Events.FRAG_BUFFERED, () => { this.hlsRecoveries = 0; });
@@ -687,7 +785,7 @@ export class PlayerPipeline {
       log.warn('hls.js initialization failed; using direct playback',
         'event=playback.hls.init.failed', this.callbacks.playbackLabel(loadToken), error);
       this.videoEl.src = url;
-      this.videoEl.play().catch(() => {});
+      safePlay(this.videoEl);
     }
   }
 
@@ -818,7 +916,7 @@ export class PlayerPipeline {
         }
         this.callbacks.onAudioTracksUpdated();
         this.callbacks.onSubtitleTracksUpdated();
-        videoEl.play().catch(error => log.warn('Shaka play() rejected',
+        safePlay(videoEl, error => log.warn('Shaka play() rejected',
           'event=playback.play.rejected',
           this.callbacks.playbackLabel(loadToken), 'path=dash', shakaErrorDetail(error)));
       }).catch(error => {
@@ -845,8 +943,8 @@ export class PlayerPipeline {
         'event=playback.path.direct', this.callbacks.playbackLabel(loadToken),
         'reason=mpegts-unsupported');
       this.videoEl.src = url;
-        this.videoEl.play().catch(() => {});
-        return;
+      safePlay(this.videoEl);
+      return;
       }
       const player = mpegts.createPlayer({
         type: isFlv ? 'flv' : 'mpegts',
@@ -867,7 +965,7 @@ export class PlayerPipeline {
       log.warn('mpegts.js initialization failed; using direct playback',
         'event=playback.mpegts.init.failed', this.callbacks.playbackLabel(loadToken), error);
       this.videoEl.src = url;
-      this.videoEl.play().catch(() => {});
+      safePlay(this.videoEl);
     }
   }
 

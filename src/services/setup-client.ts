@@ -6,7 +6,7 @@ import {
   normalizeXtreamBaseUrl,
   normalizeXtreamLiveOutputPreference,
 } from '../utils/xtream-url';
-import { serviceBase } from './service-http';
+import { serviceBase, serviceRequestOptions, serviceAuthToken } from './service-http';
 import { StorageService } from './storage-service';
 import { uploadIdFromUrl } from './upload-client';
 import { ReminderService } from './reminder-service';
@@ -75,7 +75,9 @@ class SetupClientImpl {
       return null;
     }
     try {
-      const res = await fetchWithTimeout(`${base}/info`, {}, TIMEOUT);
+      const token = serviceAuthToken();
+      const query = token ? `?token=${encodeURIComponent(token)}` : '';
+      const res = await fetchWithTimeout(`${base}/info${query}`, serviceRequestOptions(), TIMEOUT);
       if (!res.ok) {
         log.warn('getInfo: HTTP', res.status);
         return null;
@@ -91,9 +93,11 @@ class SetupClientImpl {
     const base = serviceBase();
     if (!base) return;
     try {
+      const token = serviceAuthToken();
+      const query = token ? `?token=${encodeURIComponent(token)}` : '';
       const res = await fetchWithTimeout(
-        `${base}/setup-actions/${encodeURIComponent(String(id))}`,
-        { method: 'DELETE' },
+        `${base}/setup-actions/${encodeURIComponent(String(id))}${query}`,
+        serviceRequestOptions({ method: 'DELETE' }),
         TIMEOUT,
       );
       if (!res.ok) log.warn('Action acknowledgement failed: HTTP', res.status);
@@ -149,13 +153,15 @@ class SetupClientImpl {
         },
     };
     try {
+      const token = serviceAuthToken();
+      const query = token ? `?token=${encodeURIComponent(token)}` : '';
       const res = await fetchWithTimeout(
-        `${base}/setup-state`,
-        {
+        `${base}/setup-state${query}`,
+        serviceRequestOptions({
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(state),
-        },
+        }),
         TIMEOUT,
       );
       if (!res.ok) log.warn('Setup state publish failed: HTTP', res.status);
@@ -179,7 +185,9 @@ class SetupClientImpl {
 
     let actions: SetupAction[];
     try {
-      const res = await fetchWithTimeout(`${base}/setup-actions`, {}, TIMEOUT);
+      const token = serviceAuthToken();
+      const query = token ? `?token=${encodeURIComponent(token)}` : '';
+      const res = await fetchWithTimeout(`${base}/setup-actions${query}`, serviceRequestOptions(), TIMEOUT);
       if (!res.ok) {
         log.warn('Action sync: HTTP', res.status);
         return false;

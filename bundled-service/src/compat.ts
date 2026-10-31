@@ -131,3 +131,20 @@ export function isSafeInteger(value: number): boolean {
     : isFinite(value) && Math.floor(value) === value &&
       Math.abs(value) <= 9007199254740991;
 }
+
+/**
+ * Constant-time string comparison safe for Node 0.12.2 and modern Node.
+ * Accumulates character diffs across the entire length of the strings to prevent
+ * timing side-channels in PIN and token checks.
+ */
+export function timingSafeEqualString(a: string, b: string): boolean {
+  if (typeof a !== 'string' || typeof b !== 'string') return false;
+  let mismatch = a.length === b.length ? 0 : 1;
+  const len = Math.max(a.length, b.length);
+  for (let i = 0; i < len; i++) {
+    const codeA = i < a.length ? a.charCodeAt(i) : 0;
+    const codeB = i < b.length ? b.charCodeAt(i) : 0;
+    mismatch |= codeA ^ codeB;
+  }
+  return mismatch === 0;
+}

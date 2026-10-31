@@ -1,0 +1,58 @@
+{
+  "mission": "MISSION_2_1",
+  "title": "Multimedia Hardware Diagnosis & Validation Closure",
+  "target_device": {
+    "model": "LG 65UM7400PDA",
+    "soc": "Realtek RTD2870 (rtd287o)",
+    "cpu": "Quad-Core ARMv7l (Cortex-A53 32-bit mode)",
+    "webos_version": "4.10.2-29",
+    "chromium_version": "53.0.2785.34",
+    "node_version": "v0.12.2"
+  },
+  "diagnosis_summary": {
+    "mp4_failure_root_cause": {
+      "url": "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+      "http_status": 403,
+      "http_status_text": "Forbidden",
+      "content_type": "application/xml; charset=UTF-8",
+      "error_code": "AccessDenied",
+      "error_message": "Anonymous caller does not have storage.objects.get access to the Google Cloud Storage object",
+      "is_codec_incompatibility": false,
+      "gstreamer_failure_reason": "Remote server delivered XML error document instead of MP4 media container",
+      "architectural_factor": "streamUrlMime in src/utils/url.ts lacks .mp4 extension match, causing unnecessary probe request"
+    },
+    "recovery_and_fallback": {
+      "detected_error_code": 4,
+      "detected_error_name": "MEDIA_ERR_SRC_NOT_SUPPORTED",
+      "classification": "unsupported",
+      "stall_retries_bypassed": true,
+      "channel_health_status": "unavailable",
+      "ui_indicator": "red dot (channel-health-dot unavailable)",
+      "osd_message": "Error de reproducción — probando el siguiente canal…",
+      "error_advance_delay_ms": 2000,
+      "fallback_target": "Channel 1 (HLS)",
+      "fallback_outcome": "SUCCESS (stable 1080p playback)",
+      "back_key_behavior": "SUCCESS (clean stop, returned to channels menu)"
+    },
+    "cdp_security_audit": {
+      "port": 9998,
+      "binding": "0.0.0.0:9998",
+      "process": "WebAppMgr (PID 3325)",
+      "risk_level": "HIGH_ON_UNTRUSTED_LAN",
+      "cause": "Developer apps in /media/developer/apps/ default to inspectable: true in webOS SAM",
+      "remediation": "Set inspectable: false in appinfo.json for production builds"
+    },
+    "system_metrics_post_test": {
+      "frontend_rss_kb": 55664,
+      "frontend_rss_mb": 55.6,
+      "service_rss_kb": 15684,
+      "service_rss_mb": 15.6,
+      "total_player_rss_mb": 71.2,
+      "oom_events": 0,
+      "restarts": 0,
+      "stability": "EXCELLENT"
+    }
+  },
+  "verdict": "DIAGNOSIS_COMPLETE"
+}
+

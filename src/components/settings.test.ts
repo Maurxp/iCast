@@ -105,7 +105,7 @@ const {
       getEpgOffsets: vi.fn(() => ({ ...state.epgOffsets })),
       getLocalePreference: vi.fn(() => state.locale),
       getOnlineSubtitleConfig: vi.fn(() => state.onlineSubtitles),
-      getSelectedXtreamAccountId: vi.fn(() => null),
+      getSelectedXtreamAccountId: vi.fn((): string | null => null),
       getLiveCategorySnapshot: vi.fn(() => null),
       setLiveCategorySnapshot: vi.fn(),
       getShowHiddenChannels: vi.fn(() => state.showHidden),
@@ -164,7 +164,7 @@ const {
     setupMock: {
       // Default to "service unreachable" so render's async refreshSetupInfo is a
       // no-op for existing tests. Tests can override via mockResolvedValueOnce.
-      getInfo: vi.fn(async () => null),
+      getInfo: vi.fn(async (): Promise<{ ip: string; port: number; setupUrl: string; manualUrl: string; pairingCode: string; } | null> => null),
     },
     uploadMock: {
       remove: vi.fn(async () => true),
@@ -184,7 +184,7 @@ const {
         suspect: 0,
         unavailable: 0,
       })),
-      checkAll: vi.fn(async () => ({
+      checkAll: vi.fn(async (_channels?: unknown, _options?: unknown) => ({
         total: 0,
         unknown: 0,
         healthy: 0,
@@ -234,7 +234,7 @@ vi.mock('../services/reminder-service', () => ({
 vi.mock('../services/setup-client', () => ({ SetupClient: setupMock }));
 vi.mock('../services/channel-health', () => ({ ChannelHealthService: healthMock }));
 
-import { Settings, liveCategoriesButtonContent } from './settings';
+import { Settings, liveCategoriesButtonContent, type SaveAction } from './settings';
 import { setLocale } from '../i18n';
 import { PlaylistService } from '../services/playlist-service';
 import { EpgService } from '../services/epg-service';
@@ -245,8 +245,8 @@ import { CONFIG } from '../config';
 import { ParentalControlService } from '../services/parental-control';
 
 let container: HTMLElement;
-let onSave: ReturnType<typeof vi.fn>;
-let onChannelsChanged: ReturnType<typeof vi.fn>;
+let onSave: ReturnType<typeof vi.fn<(action: SaveAction) => void | Promise<void>>>;
+let onChannelsChanged: ReturnType<typeof vi.fn<() => void>>;
 let settings: Settings;
 
 beforeEach(() => {
@@ -372,8 +372,8 @@ describe('Settings.render', () => {
       signal?: AbortSignal;
       waitWhilePaused?: () => Promise<void>;
     } = {};
-    let finish: (() => void) | null = null;
-    healthMock.checkAll.mockImplementationOnce(async (_channels, value) => {
+    let finish: () => void = () => {};
+    healthMock.checkAll.mockImplementationOnce(async (_channels: unknown, value: any) => {
       options = value;
       await new Promise<void>(resolve => { finish = resolve; });
       return {
@@ -953,7 +953,7 @@ describe('Settings theme picker', () => {
   beforeEach(() => settings.render());
 
   it('renders a swatch per registered theme with the saved theme active', () => {
-    expect(container.querySelectorAll('.theme-swatch')).toHaveLength(15);
+    expect(container.querySelectorAll('.theme-swatch')).toHaveLength(17);
     expect(container.querySelector('.theme-swatch.active')!.getAttribute('data-theme-id')).toBe('midnight');
   });
 
@@ -1216,8 +1216,8 @@ describe('Settings editing', () => {
       catchupDays: 0,
     }];
     let signal: AbortSignal | undefined;
-    let finish: (() => void) | null = null;
-    healthMock.checkAll.mockImplementationOnce(async (_channels, options) => {
+    let finish: () => void = () => {};
+    healthMock.checkAll.mockImplementationOnce(async (_channels: unknown, options: any) => {
       signal = options.signal;
       await new Promise<void>(resolve => { finish = resolve; });
       return {

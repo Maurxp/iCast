@@ -99,7 +99,7 @@ describe('focus ESLint suppressions', () => {
     for (const file of files) {
       for (const line of readFileSync(file, 'utf8').split('\n')) {
         if (!line.includes('eslint-disable') || !line.includes('focus/')) continue;
-        const match = SUPPRESSION.exec(line);
+        const match = SUPPRESSION.exec(line.replace(/\r$/, ''));
         expect(match, `${file}: ${line.trim()}`).not.toBeNull();
         for (const rule of match[1].split(', ')) expect(FOCUS_RULES).toContain(rule.slice('focus/'.length));
         sites.push({ file: file.split(path.sep).join('/'), rules: match[1].split(', '), reason: match[2] });

@@ -16,6 +16,106 @@
 /* Midnight — the default. Mirrors main.css :root so an explicit
    data-theme="midnight" (and the Midnight swatch) resolve correctly on any
    element, not just the unset root. Keep in sync with main.css :root. */
+[data-theme="obsidian"] {
+  /* Tokens Oficiales iCast (M3.1) */
+  --bg-base: #101114;
+  --bg-surface-primary: #191a1f;
+  --bg-surface-secondary: #24262b;
+  --bg-surface-elevated: #2d3037;
+  --text-primary: #ededef;
+  --text-secondary: #a5a6ac;
+  --text-muted: #70727a;
+  --accent-neutral: #c8bfaf;
+  --accent-neutral-subtle: rgba(200, 191, 175, 0.15);
+  --focus-ring-color: #ededef;
+  --focus-halo-inner: #101114;
+  --focus-surface-highlight: #2a2d35;
+  --badge-live-bg: #8b2525;
+  --badge-live-dot: #e05252;
+  --badge-codec-text: #a5a6ac;
+  --badge-codec-bg: rgba(255, 255, 255, 0.08);
+  --border-subtle: rgba(255, 255, 255, 0.07);
+  --border-hairline: rgba(255, 255, 255, 0.12);
+  --border-specular: rgba(255, 255, 255, 0.22);
+  --overlay-scrim: rgba(8, 9, 12, 0.85);
+  --shadow-card: 0 4px 16px rgba(0, 0, 0, 0.40);
+  --shadow-focus: 0 12px 32px rgba(0, 0, 0, 0.60);
+  --shadow-floating: 0 20px 48px rgba(0, 0, 0, 0.75);
+
+  /* Mapeo Retrocompatible para Componentes Existentes */
+  --bg-primary: #101114;
+  --catalog-hero-scrim-rgb: 16 17 20;
+  --bg-secondary: #191a1f;
+  --bg-tertiary: #24262b;
+  --bg-card: #191a1f;
+  --accent: #c8bfaf;
+  --accent-dim: #9e9688;
+  --catalog-sort-selected-bg: #2d3037;
+  --accent-rgb: 200 191 175;
+  --accent-glow: rgba(200, 191, 175, 0.25);
+  --danger: #ff4757;
+  --danger-rgb: 255 71 87;
+  --success: #2ed573;
+  --warning: #ffa502;
+  --warning-rgb: 255 165 2;
+  --border: rgba(255, 255, 255, 0.08);
+  --focus-ring: #ededef;
+  --catalog-surface: var(--bg-card);
+  --catalog-control: var(--bg-tertiary);
+  --catalog-focus: var(--accent);
+  --catalog-focus-rgb: var(--accent-rgb);
+}
+
+[data-theme="porcelain"] {
+  /* Tokens Oficiales iCast (M3.1) */
+  --bg-base: #f3f2ef;
+  --bg-surface-primary: #ffffff;
+  --bg-surface-secondary: #e8e7e3;
+  --bg-surface-elevated: #ffffff;
+  --text-primary: #252629;
+  --text-secondary: #777873;
+  --text-muted: #a1a29d;
+  --accent-neutral: #a99476;
+  --accent-neutral-subtle: rgba(169, 148, 118, 0.18);
+  --focus-ring-color: #252629;
+  --focus-halo-inner: #ffffff;
+  --focus-surface-highlight: #f9f9f8;
+  --badge-live-bg: #fee2e2;
+  --badge-live-dot: #dc2626;
+  --badge-codec-text: #475569;
+  --badge-codec-bg: rgba(0, 0, 0, 0.06);
+  --border-subtle: rgba(0, 0, 0, 0.06);
+  --border-hairline: rgba(0, 0, 0, 0.10);
+  --border-specular: rgba(255, 255, 255, 0.85);
+  --overlay-scrim: rgba(37, 38, 41, 0.55);
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.05);
+  --shadow-focus: 0 8px 24px rgba(37, 38, 41, 0.16);
+  --shadow-floating: 0 16px 36px rgba(0, 0, 0, 0.12);
+
+  /* Mapeo Retrocompatible para Componentes Existentes */
+  --bg-primary: #f3f2ef;
+  --catalog-hero-scrim-rgb: 243 242 239;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #e8e7e3;
+  --bg-card: #ffffff;
+  --accent: #a99476;
+  --accent-dim: #7f6f58;
+  --catalog-sort-selected-bg: #e8e7e3;
+  --accent-rgb: 169 148 118;
+  --accent-glow: rgba(169, 148, 118, 0.25);
+  --danger: #dc2626;
+  --danger-rgb: 220 38 38;
+  --success: #059669;
+  --warning: #d97706;
+  --warning-rgb: 217 119 6;
+  --border: rgba(0, 0, 0, 0.10);
+  --focus-ring: #252629;
+  --catalog-surface: var(--bg-card);
+  --catalog-control: var(--bg-tertiary);
+  --catalog-focus: var(--accent);
+  --catalog-focus-rgb: var(--accent-rgb);
+}
+
 [data-theme="midnight"] {
   --bg-primary: #0a0a0f;
   --catalog-hero-scrim-rgb: 10 10 15;
@@ -283,6 +383,7 @@
 }
 
 /* Paper Light — light. */
+[data-theme="porcelain"],
 [data-theme="paper-light"] {
   --bg-primary: #fdf6e3;
   --catalog-hero-scrim-rgb: 253 246 227;
@@ -353,6 +454,7 @@
 
 /* Scrollbars follow muted text on dark themes. Light themes use a softer
    midpoint so a persistent native scrollbar does not become a dark divider. */
+[data-theme="obsidian"],
 [data-theme="midnight"],
 [data-theme="ember"],
 [data-theme="emerald"],
@@ -376,6 +478,7 @@
   --scrollbar-thumb: #a9adba;
 }
 
+[data-theme="porcelain"],
 [data-theme="paper-light"] {
   --scrollbar-thumb: #b0b3a9;
 }

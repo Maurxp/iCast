@@ -1,0 +1,94 @@
+{
+  "mission": "R0.2",
+  "title": "GitHub Publication Readiness",
+  "project": "iCast",
+  "version": "1.17.0",
+  "timestamp": "2026-10-31T22:45:00Z",
+  "repository": {
+    "destination": "https://github.com/Maurxp/iCast.git",
+    "upstream": "https://github.com/lennylxx/webos-iptv-player.git",
+    "localWorkspace": "C:\\Users\\amaur\\Desktop\\webos-iptv-player",
+    "activeBranch": "fix/mission-2-2-stabilization",
+    "headCommit": "52b5dfaffa7db6207350d29b0ec5bad35f12915f",
+    "destinationState": "CONFIRMED_EMPTY_AND_ACCESSIBLE"
+  },
+  "legal": {
+    "primaryLicense": "Apache-2.0",
+    "originalAuthor": "Lenny (lennylxx)",
+    "derivativeWorkAuthor": "iCast Contributors (Maurxp)",
+    "noticeFileCreated": true,
+    "licenseDualAttribution": true,
+    "thirdPartyNoticesPreserved": true
+  },
+  "platform": {
+    "targetDevice": "LG 65UM7400PDA",
+    "webos": "webOS TV Lite 4.10.2-29",
+    "chromium": "53.0.2785.34",
+    "node": "0.12.2",
+    "arch": "ARMv7 32-bit",
+    "soc": "Realtek RTD2870",
+    "appId": "com.lennylxx.iptv",
+    "appIdStatus": "PRESERVED_LEGACY"
+  },
+  "compatibilityCalibration": {
+    "claimedCompatibility": "Calibrated 5-tier taxonomy",
+    "tier1_physicalDevice": "LG 65UM7400PDA (webOS 4.10.2-29) - FULLY VALIDATED",
+    "tier2_staticFloor": "Chromium 53.0.2785.34 / ES5.1 - ENFORCED VIA LINT/ESBUILD",
+    "tier3_simulation": "Playwright legacy engine simulation - VALIDATED",
+    "tier4_desktopPreview": "Node.js 22 / Chromium Desktop - OPERATIONAL",
+    "tier5_plannedFleet": "webOS 5.x - webOS 24 - PENDING PHYSICAL TESTBED"
+  },
+  "typescriptDiagnosticsResolution": {
+    "file": "src/components/settings.test.ts",
+    "initialDiagnostics": 14,
+    "resolvedDiagnostics": 0,
+    "solution": "Annotated Vitest mock return types and typed callback parameters; added tsconfig.test.json extending production tsconfig.json",
+    "productionTypecheck": "PASS (0 errors)",
+    "testTypecheck": "PASS (0 errors)",
+    "vitestSettingsResult": "PASS (155/155 tests)"
+  },
+  "securityAndIsolation": {
+    "privateIpsSanitized": true,
+    "localTestbedScriptsIgnored": [
+      "scripts/tv_*",
+      "scripts/test_lan_pairing.py",
+      "scripts/synthetic_test.m3u"
+    ],
+    "secretsFoundInStagedFiles": 0,
+    "gitignoreVerified": true
+  },
+  "continuousIntegration": {
+    "workflowFile": ".github/workflows/ci.yml",
+    "permissions": "contents: read",
+    "runtime": "Node.js 22 LTS",
+    "checksIncluded": [
+      "typecheck",
+      "lint:css",
+      "lint:js",
+      "vitest",
+      "build",
+      "package-ipk-validation"
+    ],
+    "artifactRetentionDays": 14,
+    "automatedRelease": false,
+    "automatedPush": false
+  },
+  "r01OmissionResolution": {
+    "omittedFilesCount": 34,
+    "resolution": "Staged full coherent codebase (pre-existing stabilization M1b-M2.3 + visual foundations M3.1 + repository governance)",
+    "buildIntegrity": "FULL_PASS"
+  },
+  "verificationGates": {
+    "typecheck": "PASS (0 errors)",
+    "stylelint": "PASS (0 errors)",
+    "eslint": "PASS (0 errors)",
+    "build": "PASS (Chromium-53 clean)",
+    "vitest": "PASS",
+    "gitDiffCheck": "PASS (0 whitespace errors)"
+  },
+  "publicationSafety": {
+    "pushExecuted": false,
+    "status": "FROZEN_AWAITING_USER_AUTHORIZATION"
+  }
+}
+

@@ -2,7 +2,7 @@ import type { PlaylistEntry } from '../types';
 import { fetchWithTimeout } from '../utils/fetch-helper';
 import { createLogger } from '../utils/logger';
 import { genPlaylistId } from '../utils/playlist';
-import { serviceBase } from './service-http';
+import { serviceBase, serviceRequestOptions, serviceAuthToken } from './service-http';
 import { StorageService } from './storage-service';
 
 const log = createLogger('Upload');
@@ -32,7 +32,9 @@ class UploadClientImpl {
       return null;
     }
     try {
-      const res = await fetchWithTimeout(`${b}/uploads`, {}, TIMEOUT);
+      const token = serviceAuthToken();
+      const query = token ? `?token=${encodeURIComponent(token)}` : '';
+      const res = await fetchWithTimeout(`${b}/uploads${query}`, serviceRequestOptions(), TIMEOUT);
       if (!res.ok) {
         log.warn('list: HTTP', res.status);
         return null;
@@ -40,7 +42,7 @@ class UploadClientImpl {
       const items = (await res.json()) as UploadMeta[];
       return items.map((it) => ({
         ...it,
-        url: it.url || `${b}/uploads/${encodeURIComponent(it.id)}.m3u`,
+        url: it.url || `${b}/uploads/${encodeURIComponent(it.id)}.m3u${query}`,
       }));
     } catch (e) {
       log.debug('list failed (service likely not running):', e);
@@ -56,7 +58,9 @@ class UploadClientImpl {
       return false;
     }
     try {
-      const res = await fetchWithTimeout(`${b}/uploads/${encodeURIComponent(id)}`, { method: 'DELETE' }, TIMEOUT);
+      const token = serviceAuthToken();
+      const query = token ? `?token=${encodeURIComponent(token)}` : '';
+      const res = await fetchWithTimeout(`${b}/uploads/${encodeURIComponent(id)}${query}`, serviceRequestOptions({ method: 'DELETE' }), TIMEOUT);
       if (!res.ok) {
         log.warn('remove: HTTP', res.status, 'for id', id);
         return false;

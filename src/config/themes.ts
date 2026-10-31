@@ -8,10 +8,12 @@ export interface ThemeMeta {
   isLight: boolean;
 }
 
-export const DEFAULT_THEME = 'midnight';
+export const DEFAULT_THEME = 'obsidian';
 
 // Display order in the picker.
 export const THEMES: ThemeMeta[] = [
+  { id: 'obsidian', name: 'Obsidian (iCast)', isLight: false },
+  { id: 'porcelain', name: 'Porcelain (iCast)', isLight: true },
   { id: 'midnight', name: 'Midnight', isLight: false },
   { id: 'ember', name: 'Ember', isLight: false },
   { id: 'emerald', name: 'Emerald', isLight: false },

@@ -7,12 +7,13 @@
  */
 
 import * as http from 'http';
+import * as os from 'os';
 import { SetupActionStore } from '../setup/actions';
 import { SetupStateStore } from '../setup/state';
 import { startServer, type ServiceChangeEvent } from './server';
 
 // Minimal shape of the webos-service Service object this module uses.
-interface LunaService {
+export interface LunaService {
   register(method: string, handler: (msg: LunaMsg) => void): void;
   activityManager: {
     create(name: string, cb: () => void): void;
@@ -20,15 +21,72 @@ interface LunaService {
   };
 }
 
-type LunaMsg = {
+export type LunaMsg = {
   respond: (r: unknown) => void;
   isSubscription?: boolean;
+  applicationId?: string;
+  callerId?: string;
+  sender?: string;
   // Per webos-service: msg is an EventEmitter; clients dropping their end
   // surface as a 'cancel' event on the msg. We use this for subscription
   // cleanup. (msg.cancel() exists too but is a *server-side* trigger taking
   // no arguments, not a callback-registering API.)
   on?: (event: 'cancel', listener: () => void) => void;
 };
+
+function getLanIp(): string {
+  const ifaces = os.networkInterfaces();
+  for (const name of Object.keys(ifaces)) {
+    for (const ni of ifaces[name] || []) {
+      if (ni.family === 'IPv4' && !ni.internal) return ni.address;
+    }
+  }
+  return 'localhost';
+}
+
+const AUTHORIZED_APP_ID = 'com.lennylxx.iptv';
+
+/**
+ * Validates that an incoming Luna message originated strictly from the
+ * authorized webOS application ('com.lennylxx.iptv').
+ *
+ * Enforces a strict FAIL-CLOSED policy:
+ * - Message must be a valid object.
+ * - Examines top-level LS2 metadata properties only (applicationId, callerId, sender).
+ * - Never trusts msg.payload (client parameters).
+ * - Missing or empty identity claims are REJECTED (fail-closed).
+ * - Mismatched identity claims are REJECTED.
+ * - Contradictory identity claims (e.g. applicationId matches but sender does not) are REJECTED.
+ */
+export function isAuthorizedCaller(msg: unknown): boolean {
+  if (!msg || typeof msg !== 'object') {
+    return false;
+  }
+  const m = msg as Record<string, unknown>;
+
+  const appId = typeof m.applicationId === 'string' ? m.applicationId.trim() : undefined;
+  const callerId = typeof m.callerId === 'string' ? m.callerId.trim() : undefined;
+  const sender = typeof m.sender === 'string' ? m.sender.trim() : undefined;
+
+  const claims: string[] = [];
+  if (appId) claims.push(appId);
+  if (callerId) claims.push(callerId);
+  if (sender) claims.push(sender);
+
+  // FAIL-CLOSED: Deny access if no identity metadata was provided by LS2
+  if (claims.length === 0) {
+    return false;
+  }
+
+  // All present claims must match AUTHORIZED_APP_ID with zero contradictions
+  for (let i = 0; i < claims.length; i++) {
+    if (claims[i] !== AUTHORIZED_APP_ID) {
+      return false;
+    }
+  }
+
+  return true;
+}
 
 // Non-webOS fallback (e.g. local testing): start the HTTP server directly with
 // no Luna bus. There are no push subscribers off-device, so onChange is a no-op.
@@ -41,6 +99,8 @@ export function startLanStandalone(dataDir: string): void {
 export function registerLanService(service: LunaService, dataDir: string): void {
   let server: http.Server | null = null;
   let actualPort: number | null = null;
+  let appToken: string | null = null;
+
   // Buffer for `start` messages that arrive before the HTTP server has finished
   // binding. We respond synchronously once the bind resolves to avoid using
   // `await` inside the Luna handler — async handlers break the message/activity
@@ -82,19 +142,29 @@ export function registerLanService(service: LunaService, dataDir: string): void 
       bindInProgress = false;
       server = r.server;
       actualPort = r.port;
+      appToken = r.appToken;
       console.log('[lan] HTTP server ready on port ' + actualPort);
       if (!keepAliveCreated) {
         service.activityManager.create('keepAlive', () => { /* keep service alive */ });
         keepAliveCreated = true;
       }
       // Drain any `start` calls that arrived before this bind finished.
-      for (const m of pendingStarts) m.respond({ running: true, port: actualPort });
+      for (const m of pendingStarts) {
+        m.respond({
+          returnValue: true,
+          running: true,
+          port: actualPort,
+          appToken,
+        });
+      }
       pendingStarts.length = 0;
     }).catch((err) => {
       bindInProgress = false;
       console.error('[lan] startServer failed:', err);
       const msg = err instanceof Error ? err.message : String(err);
-      for (const m of pendingStarts) m.respond({ running: false, error: msg });
+      for (const m of pendingStarts) {
+        m.respond({ returnValue: false, running: false, error: msg });
+      }
       pendingStarts.length = 0;
     });
   }
@@ -104,9 +174,22 @@ export function registerLanService(service: LunaService, dataDir: string): void 
   ensureServer();
 
   service.register('start', (msg) => {
+    if (!isAuthorizedCaller(msg)) {
+      msg.respond({
+        returnValue: false,
+        errorCode: -1,
+        errorText: 'Unauthorized',
+      });
+      return;
+    }
     console.log('[lan] start method invoked');
     if (actualPort !== null) {
-      msg.respond({ running: true, port: actualPort });
+      msg.respond({
+        returnValue: true,
+        running: true,
+        port: actualPort,
+        appToken,
+      });
     } else {
       // Server still binding (or was torn down by stop and needs a fresh
       // bind) — queue this msg and kick a bind if one isn't already in
@@ -116,8 +199,40 @@ export function registerLanService(service: LunaService, dataDir: string): void 
     }
   });
 
+  service.register('getInfo', (msg) => {
+    if (!isAuthorizedCaller(msg)) {
+      msg.respond({
+        returnValue: false,
+        errorCode: -1,
+        errorText: 'Unauthorized',
+      });
+      return;
+    }
+    if (actualPort !== null) {
+      const ip = getLanIp();
+      const manualUrl = 'http://' + ip + ':' + actualPort;
+      msg.respond({
+        returnValue: true,
+        running: true,
+        port: actualPort,
+        ip,
+        manualUrl,
+      });
+    } else {
+      msg.respond({ returnValue: false, error: 'Server not ready' });
+    }
+  });
+
   service.register('heartbeat', (msg) => {
-    msg.respond({ running: !!server, port: actualPort });
+    if (!isAuthorizedCaller(msg)) {
+      msg.respond({
+        returnValue: false,
+        errorCode: -1,
+        errorText: 'Unauthorized',
+      });
+      return;
+    }
+    msg.respond({ returnValue: true, running: !!server, port: actualPort });
   });
 
   // Graceful shutdown. The app calls this when it is backgrounded
@@ -126,6 +241,14 @@ export function registerLanService(service: LunaService, dataDir: string): void 
   // a subsequent `start` rebinds via ensureServer() — Luna does NOT need
   // to respawn us.
   service.register('stop', (msg) => {
+    if (!isAuthorizedCaller(msg)) {
+      msg.respond({
+        returnValue: false,
+        errorCode: -1,
+        errorText: 'Unauthorized',
+      });
+      return;
+    }
     console.log('[lan] stop method invoked');
     // Drop all push subscribers — their connections are scoped to this
     // service lifetime and would be stale after a restart anyway.
@@ -144,17 +267,26 @@ export function registerLanService(service: LunaService, dataDir: string): void 
       const s = server;
       server = null;
       actualPort = null;
+      appToken = null;
       s.close((err) => {
         if (err) console.warn('[lan] server.close error:', err);
         else console.log('[lan] HTTP server closed');
       });
     }
-    msg.respond({ stopped: wasRunning, droppedSubscribers: droppedSubs });
+    msg.respond({ returnValue: true, stopped: wasRunning, droppedSubscribers: droppedSubs });
   });
 
   // Push channel: clients subscribe once and the service calls
   // msg.respond({event}) whenever uploads mutate or a setup action is queued.
   service.register('serviceEvents', (msg) => {
+    if (!isAuthorizedCaller(msg)) {
+      msg.respond({
+        returnValue: false,
+        errorCode: -1,
+        errorText: 'Unauthorized',
+      });
+      return;
+    }
     if (msg.isSubscription) {
       if (subscribers.indexOf(msg) < 0) subscribers.push(msg);
       console.log('[lan] serviceEvents subscriber added, total=' + subscribers.length);
@@ -169,6 +301,6 @@ export function registerLanService(service: LunaService, dataDir: string): void 
         });
       }
     }
-    msg.respond({ subscribed: !!msg.isSubscription });
+    msg.respond({ returnValue: true, subscribed: !!msg.isSubscription });
   });
 }

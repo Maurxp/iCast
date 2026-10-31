@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48" fill="none">
+  <!-- iCast Isotipo Oficial B (Monocromático — Modo Obsidian / Fondos Oscuros) -->
+  <defs>
+    <linearGradient id="isoObs_TopLeft" x1="12" y1="24" x2="24" y2="10" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#4B4E59"/>
+      <stop offset="100%" stop-color="#6F7380"/>
+    </linearGradient>
+    <linearGradient id="isoObs_TopRight" x1="24" y1="10" x2="36" y2="24" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#EDEDEF"/>
+      <stop offset="100%" stop-color="#B4B7C2"/>
+    </linearGradient>
+    <linearGradient id="isoObs_BotLeft" x1="12" y1="24" x2="24" y2="38" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#1E2026"/>
+      <stop offset="100%" stop-color="#2D3039"/>
+    </linearGradient>
+    <linearGradient id="isoObs_BotRight" x1="24" y1="38" x2="36" y2="24" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#383B45"/>
+      <stop offset="100%" stop-color="#555866"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Faceta Superior Izquierda -->
+  <path d="M24 8L10 24L24 21V8Z" fill="url(#isoObs_TopLeft)"/>
+  <!-- Faceta Superior Derecha (Reflejo Platino) -->
+  <path d="M24 8L38 24L24 21V8Z" fill="url(#isoObs_TopRight)"/>
+  <!-- Faceta Inferior Izquierda (Sombra Carbón) -->
+  <path d="M10 24L24 40V21L10 24Z" fill="url(#isoObs_BotLeft)"/>
+  <!-- Faceta Inferior Derecha (Plata Mineral) -->
+  <path d="M38 24L24 40V21L38 24Z" fill="url(#isoObs_BotRight)"/>
+
+  <!-- Aristas Especulares de Precisión -->
+  <path d="M24 8L10 24L24 40L38 24L24 8Z" stroke="#EDEDEF" stroke-width="1.0" stroke-opacity="0.35"/>
+  <path d="M24 8V40" stroke="#EDEDEF" stroke-width="1.2" stroke-opacity="0.55"/>
+</svg>
+

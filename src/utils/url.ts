@@ -67,6 +67,10 @@ export function diagnosticStreamUrl(url: string): string {
 }
 
 export function streamUrlMime(url: string): string {
+  if (/\.(?:mp4|m4v)(?:[?#]|$)/i.test(url) ||
+      /[?&](?:extension|output|output_format)=(?:mp4|m4v)(?:[&#]|$)/i.test(url)) {
+    return 'video/mp4';
+  }
   if (/\.ts(?:[?#]|$)/i.test(url) ||
       /[?&](?:extension|output|output_format)=ts(?:[&#]|$)/i.test(url)) {
     return 'video/mp2t';
@@ -95,6 +99,7 @@ export function streamMime(contentType: string): string {
   if (type.includes('dash+xml') || type.includes('dash.mpd')) {
     return 'application/dash+xml';
   }
+  if (type === 'video/mp4' || type === 'video/m4v') return 'video/mp4';
   if (/^(?:video|audio)\//.test(type)) return type;
   return '';
 }

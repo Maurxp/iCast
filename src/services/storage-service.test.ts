@@ -358,8 +358,8 @@ describe('StorageService', () => {
     expect(StorageService.getEpgOffsets()).toEqual({});
   });
 
-  it('defaults the theme to midnight and round-trips a selection', () => {
-    expect(StorageService.getTheme()).toBe('midnight');
+  it('defaults the theme to obsidian and round-trips a selection', () => {
+    expect(StorageService.getTheme()).toBe('obsidian');
     StorageService.setTheme('arctic');
     expect(StorageService.getTheme()).toBe('arctic');
   });

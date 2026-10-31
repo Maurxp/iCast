@@ -1,0 +1,12 @@
+HTTP/1.1 403 Forbidden
+content-type: application/xml; charset=UTF-8
+x-guploader-uploadid: AFy3sg3u7cDC0w8_-jyB7WPHiQEp2e4v56kpdXiSZG00oTR6zRD1j2e4fMY6UmAa9CRG-k5I
+content-length: 394
+access-control-allow-origin: *
+access-control-expose-headers: origin, range
+date: Fri, 30 Oct 2026 06:49:02 GMT
+expires: Fri, 30 Oct 2026 06:49:02 GMT
+cache-control: private, max-age=0
+server: UploadServer
+
+<?xml version='1.0' encoding='UTF-8'?><Error><Code>AccessDenied</Code><Message>Access denied.</Message><Details>Anonymous caller does not have storage.objects.get access to the Google Cloud Storage object. Permission 'storage.objects.get' denied on resource '//storage.googleapis.com/projects/_/buckets/gtv-videos-bucket/objects/sample/BigBuckBunny.mp4' (or it may not exist).</Details></Error>

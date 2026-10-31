@@ -7,13 +7,16 @@
   <script>
     // Anti-FOUC (Flash of Unstyled Content): apply the saved theme before first paint.
     // StorageService JSON-encodes values, so the stored id is a quoted string.
-    try { var t = JSON.parse(localStorage.getItem('iptv_theme')); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+    try { var t = JSON.parse(localStorage.getItem('iptv_theme')); document.documentElement.dataset.theme = t || 'obsidian'; } catch (e) { document.documentElement.dataset.theme = 'obsidian'; }
     try { var s = JSON.parse(localStorage.getItem('iptv_text_size')); if (s) document.documentElement.dataset.textSize = s; } catch (e) {}
     try { var a = JSON.parse(localStorage.getItem('iptv_animation_mode')); if (a) document.documentElement.dataset.animation = a; } catch (e) {}
   </script>
   <link rel="stylesheet" href="css/legacy-webos-base.css">
   <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/materials.css">
   <link rel="stylesheet" href="css/themes.css">
+  <link rel="stylesheet" href="css/components.css">
   <link rel="stylesheet" href="css/navigation.css">
   <link rel="stylesheet" href="css/channel-list.css">
   <link rel="stylesheet" href="css/live-preview.css">

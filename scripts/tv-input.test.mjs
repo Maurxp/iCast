@@ -235,7 +235,11 @@ describe('TV wake', () => {
       expect(JSON.parse(readFileSync(file, 'utf8'))).toEqual({
         '10.0.0.2': mac, '10.0.0.3': '02:00:00:00:00:02',
       });
-      expect(statSync(file).mode & 0o777).toBe(0o600);
+      if (process.platform === 'win32') {
+        expect([0o600, 0o666]).toContain(statSync(file).mode & 0o777);
+      } else {
+        expect(statSync(file).mode & 0o777).toBe(0o600);
+      }
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }
