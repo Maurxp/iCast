@@ -77,8 +77,20 @@ scripts/capture-m31-demo.mjs
 scripts/generate-checksums-*.mjs
 scripts/generate-checksums-*.js
 
+# ==========================================
+# Local AI agents and development tooling
+# ==========================================
+.agents/
+.claude/
+CLAUDE.md
+# Local editor configuration
+.editorconfig
+# ==========================================
+# Local audit reports and internal evidence
+# ==========================================
+AUDIT_REPORTS/
+
 # Critical Invariant Whitelist (Never Ignore)
 !assets/brand/
 !licenses/
-!AUDIT_REPORTS/
 !scripts/fixtures/

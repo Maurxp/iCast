@@ -113,7 +113,7 @@ npm run service:smoke          # Verify bundled service on real Node.js 0.12.2 r
 - **[SECURITY.md](SECURITY.md)**: Responsible disclosure policy and local TV security context.
 - **[CHANGELOG.md](CHANGELOG.md)**: Complete chronological history of updates.
 - **[CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)**: Contributor Covenant v2.1.
-- **[AUDIT_REPORTS/](AUDIT_REPORTS/)**: Complete forensic documentation of every engineering mission and hardware validation.
+- **Forensic Audit & Architecture Records**: Comprehensive engineering mission logs, performance analyses, and hardware validation records are maintained locally by project maintainers.
 
 ---
 
