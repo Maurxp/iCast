@@ -753,7 +753,8 @@ test.describe('switching sections from the bar with the D-pad', () => {
 
 test('a hover on the Guide under its open group menu hands the bar\'s keys back without moving the grid', async ({ page }) => {
   const stamp = (ms: number) => new Date(ms).toISOString().replace(/[-:T]/g, '').slice(0, 14) + ' +0000';
-  const now = Date.now();
+  const now = new Date('2024-03-09T12:00:00Z').getTime();
+  await page.clock.setFixedTime(now);
   const hour = 3_600_000;
   const xmltv = `<?xml version="1.0" encoding="UTF-8"?><tv>
 <channel id="one"><display-name>Channel One</display-name></channel>
@@ -797,7 +798,8 @@ test('a hover on the Guide under its open group menu hands the bar\'s keys back 
 
 test('a hover under the account menu stays out of the Guide while its group menu is open', async ({ page }) => {
   const stamp = (ms: number) => new Date(ms).toISOString().replace(/[-:T]/g, '').slice(0, 14) + ' +0000';
-  const now = Date.now();
+  const now = new Date('2024-03-09T12:00:00Z').getTime();
+  await page.clock.setFixedTime(now);
   const hour = 3_600_000;
   const xmltv = `<?xml version="1.0" encoding="UTF-8"?><tv>
 <channel id="one"><display-name>Channel One</display-name></channel>

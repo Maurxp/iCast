@@ -42,7 +42,7 @@ test('stale cached EPG stays visible while a refresh is in flight', async ({ pag
     const nowPlaying = page.locator('.channel-main .channel-item').first().locator('.channel-now');
     await expect(nowPlaying).toHaveText('Cached Show');
 
-    await page.evaluate(({ url, timestamp }) => new Promise<void>((resolve, reject) => {
+    await expect.poll(() => page.evaluate(({ url, timestamp }) => new Promise<boolean>((resolve, reject) => {
       const open = indexedDB.open('iptv');
       open.onerror = () => reject(open.error);
       open.onsuccess = () => {
@@ -53,14 +53,14 @@ test('stale cached EPG stays visible while a refresh is in flight', async ({ pag
         read.onerror = () => reject(read.error);
         read.onsuccess = () => {
           if (!read.result) {
-            reject(new Error('EPG cache entry was not stored'));
+            resolve(false);
             return;
           }
           store.put({ ...read.result, timestamp });
         };
         tx.oncomplete = () => {
           db.close();
-          resolve();
+          resolve(true);
         };
         tx.onerror = () => reject(tx.error);
         tx.onabort = () => reject(tx.error);
@@ -68,7 +68,7 @@ test('stale cached EPG stays visible while a refresh is in flight', async ({ pag
     }), {
       url: epgUrl,
       timestamp: now.getTime() - 24 * 60 * 60 * 1000,
-    });
+    })).toBe(true);
 
     await page.reload();
     await expect.poll(() => epgRequests).toBe(2);
