@@ -35,6 +35,11 @@
       "file": "e2e/epg.spec.ts",
       "poll_fix": "expect.poll for indexedDB write completion",
       "status": "fixed"
+    },
+    "problem_d_service_smoke_tokens": {
+      "file": "scripts/service-runtime-smoke.js",
+      "token_fix": "pass bound.appToken and token on authenticated endpoints",
+      "status": "fixed"
     }
   },
   "local_quality_gate": {
@@ -51,6 +56,7 @@
       "passed": 212,
       "failed": 0
     },
-    "bundle": "passed"
+    "bundle": "passed",
+    "service_smoke": "passed"
   }
 }

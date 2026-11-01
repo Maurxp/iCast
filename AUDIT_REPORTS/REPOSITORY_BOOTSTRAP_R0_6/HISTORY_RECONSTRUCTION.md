@@ -66,3 +66,4 @@ Al no tener ancestros heredados en `main`:
 - GitHub atribuye el 100% de los commits de `main` a **Mauricio Perdomo**.
 - En la interfaz web de GitHub y en el grafo de colaboradores (`/graphs/contributors`), el autor principal es Mauricio Perdomo.
 - Se mantiene el remoto de solo lectura `upstream` (`https://github.com/lennylxx/webos-iptv-player.git`) como referencia de procedencia legal y técnica.
+

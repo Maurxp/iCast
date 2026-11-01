@@ -55,3 +55,4 @@ Si en cualquier momento se requiere reconstruir el estado anterior con todos los
 git clone C:\Users\amaur\Desktop\iCast_pre_r06_backup.bundle C:\Users\amaur\Desktop\iCast_restored
 ```
 El bundle es 100% autónomo y almacena todos los objetos, árboles, blobs y commits del proyecto original.
+

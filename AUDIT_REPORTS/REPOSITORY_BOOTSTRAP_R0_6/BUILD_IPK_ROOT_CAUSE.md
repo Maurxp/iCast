@@ -98,3 +98,24 @@ En las ejecuciones de GitHub Actions del workflow `Build IPK`, el paso *E2E test
   }), { url: epgUrl, timestamp: ... })).toBe(true);
   ```
   Esto permite esperar de forma segura y sin sleep arbitrario a que la transacción asíncrona de IndexedDB se consolide.
+
+
+---
+
+### Problema D: Autenticación de Tokens en Script de Smoke de Servicio (`scripts/service-runtime-smoke.js`)
+- **Síntoma:**
+  ```text
+  Error: /info returned HTTP 403: {"error":"Unauthorized: appToken required"}
+      at expectStatus (/home/runner/work/iCast/iCast/scripts/service-runtime-smoke.js:68:11)
+      at /home/runner/work/iCast/iCast/scripts/service-runtime-smoke.js:134:16
+  ```
+- **Causa Raíz:**
+  En la Misión 1C / M2 se reforzó la seguridad de `bundled-service` (`bundled-service/src/lan/server.ts`), exigiendo tokens de autorización estrictos para endpoints internos:
+  - `/info` requiere `appToken` (frontera Luna IPC / app local).
+  - `PUT /setup-state` requiere `appToken`.
+  - `GET /setup-actions` y `DELETE /setup-actions/:id` requieren `appToken`.
+  - `GET /uploads` y `GET /uploads/:id.m3u` requieren `token` (`setupToken` o `appToken`).
+  
+  Sin embargo, el script de prueba de compatibilidad de runtime Node 0.12.2 (`scripts/service-runtime-smoke.js`) invocaba estas rutas sin adjuntar `bound.appToken` ni `token` en la query string (`?token=`), provocando que el servidor Node 0.12.2 devolviera `HTTP 403 Forbidden`.
+- **Solución Aplicada:**
+  Se actualizaron las llamadas HTTP en `scripts/service-runtime-smoke.js` para suministrar `bound.appToken` en endpoints internos y `token` en endpoints de setup y descargas de M3U, manteniendo compatibilidad estricta con ES5/Node 0.12.2.

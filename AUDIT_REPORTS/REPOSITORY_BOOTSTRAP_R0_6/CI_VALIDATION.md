@@ -30,3 +30,4 @@ Se ejecutó la suite completa de las 3 áreas corregidas (`settings.spec.ts`, `t
 - Proyectos cubiertos:
   - `chromium` (escritorio moderno / control remoto)
   - `chromium-53-simulation` (simulador webOS 4 con APIs post-53 eliminadas y sintaxis moderna de CSS suprimida)
+

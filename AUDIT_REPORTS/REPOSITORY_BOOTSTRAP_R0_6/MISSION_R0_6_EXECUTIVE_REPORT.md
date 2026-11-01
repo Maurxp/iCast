@@ -46,3 +46,4 @@
 - **Remoto `origin`:** `https://github.com/Maurxp/iCast.git` (Sincronizado).
 - **Remoto `upstream`:** `https://github.com/lennylxx/webos-iptv-player.git` (Solo lectura).
 - **Ramas locales de preservación:** Conservadas de forma segura.
+

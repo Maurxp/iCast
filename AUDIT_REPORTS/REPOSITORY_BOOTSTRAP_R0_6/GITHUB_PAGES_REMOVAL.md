@@ -27,3 +27,4 @@ En el contexto de **iCast**:
 3. **Verificación de Flujos Activos:**
    - Al eliminarse el archivo de workflow, GitHub Actions ya no planifica ni ejecuta ningún despliegue hacia entornos de GitHub Pages.
    - En la pestaña *Settings > Pages* del repositorio GitHub, la fuente de despliegue queda deshabilitada o huérfana de acciones.
+

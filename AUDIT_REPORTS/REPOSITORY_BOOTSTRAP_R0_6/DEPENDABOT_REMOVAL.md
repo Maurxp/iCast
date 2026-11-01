@@ -59,3 +59,4 @@ for (const prNum of prsToClose) {
 ### Verificación Final:
 - Consulta a `GET /repos/Maurxp/iCast/pulls?state=open`:
   **Open PRs count: 0**.
+

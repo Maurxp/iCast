@@ -41,3 +41,4 @@
 
 - **iCast CI (`.github/workflows/ci.yml`):** Activo y validando typecheck, linting, tests unitarios, bundle y matriz de Node de bundled-service.
 - **Build IPK (`.github/workflows/build.yml`):** Corrigiendo las fallas E2E identificadas y verificando el empaquetado del archivo `.ipk`.
+
