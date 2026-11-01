@@ -5,9 +5,28 @@
   <meta name="viewport" content="width=1920, height=1080, initial-scale=1.0">
   <title>webOS IPTV Player</title>
   <script>
-    // Anti-FOUC (Flash of Unstyled Content): apply the saved theme before first paint.
-    // StorageService JSON-encodes values, so the stored id is a quoted string.
-    try { var t = JSON.parse(localStorage.getItem('iptv_theme')); document.documentElement.dataset.theme = t || 'obsidian'; } catch (e) { document.documentElement.dataset.theme = 'obsidian'; }
+    // Anti-FOUC (Flash of Unstyled Content): apply the resolved appearance before first paint.
+    // StorageService JSON-encodes values, so stored items are quoted strings.
+    try {
+      var pref = JSON.parse(localStorage.getItem('iptv_appearance_preference'));
+      if (!pref) {
+        var legacy = JSON.parse(localStorage.getItem('iptv_theme'));
+        if (legacy === 'porcelain' || legacy === 'obsidian') pref = legacy;
+      }
+      var res = 'obsidian';
+      if (pref === 'porcelain') {
+        res = 'porcelain';
+      } else if (pref === 'obsidian') {
+        res = 'obsidian';
+      } else {
+        res = (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) ? 'porcelain' : 'obsidian';
+      }
+      document.documentElement.dataset.theme = res;
+      document.documentElement.dataset.appearance = res;
+    } catch (e) {
+      document.documentElement.dataset.theme = 'obsidian';
+      document.documentElement.dataset.appearance = 'obsidian';
+    }
     try { var s = JSON.parse(localStorage.getItem('iptv_text_size')); if (s) document.documentElement.dataset.textSize = s; } catch (e) {}
     try { var a = JSON.parse(localStorage.getItem('iptv_animation_mode')); if (a) document.documentElement.dataset.animation = a; } catch (e) {}
   </script>

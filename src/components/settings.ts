@@ -34,8 +34,18 @@ import { genPlaylistId, isSourceEnabled } from '../utils/playlist';
 import { channelKey, legacyChannelKey } from '../utils/channel';
 import { formatEpgOffset } from '../utils/epg-offset';
 import { CONFIG } from '../config';
-import { THEMES, OVERLAY_STYLES, TEXT_SIZES, DEFAULT_TEXT_SIZE, type ThemeMeta, type OverlayStyle, type TextSize } from '../config/themes';
-import { previewTheme, applyTextSize } from '../services/theme-service';
+import {
+  APPEARANCE_OPTIONS,
+  OVERLAY_STYLES,
+  TEXT_SIZES,
+  DEFAULT_TEXT_SIZE,
+  isValidAppearancePreference,
+  type AppearanceOption,
+  type AppearancePreference,
+  type OverlayStyle,
+  type TextSize,
+} from '../config/themes';
+import { previewAppearance, previewTheme, applyTextSize } from '../services/theme-service';
 import { showToast } from './toast';
 import { ConfirmationPrompt } from './confirmation-prompt';
 import { sourceToggle, toggleGroup } from './toggle-controls';
@@ -132,16 +142,20 @@ function uploadLabel(pl: PlaylistEntry): string {
   return pl.name;
 }
 
-/** One theme swatch tile: a mini mock of the app (tab bar, a focused channel
- *  tile, list rows, status dots) plus the theme name. It carries its own
- *  `data-theme` so every `var(--…)` inside resolves to that theme's colors,
- *  independent of the app's active theme. The mock is decorative (aria-hidden);
- *  the button's aria-label names the theme. */
-function themeSwatch(theme: ThemeMeta, activeId: string): Safe {
+/** One appearance card: a refined mock of the app (tab bar, a focused channel
+ *  tile, list rows, status dots) plus the appearance title and description.
+ *  It carries its own `data-theme` so every `var(--…)` inside resolves to that
+ *  theme's colors, independent of the app's active appearance. The mock is
+ *  decorative (aria-hidden); the button's aria-label names the option. */
+function appearanceCard(option: AppearanceOption, activePreference: AppearancePreference): Safe {
+  const isSplit = option.id === 'system';
+  const previewTheme = option.id === 'porcelain' ? 'porcelain' : 'obsidian';
   return html`
-    <button class="theme-swatch ${theme.id === activeId ? 'active' : ''}" data-focusable
-            data-theme-id="${theme.id}" data-theme="${theme.id}" aria-label="${theme.name} theme">
-      <span class="theme-swatch-preview" aria-hidden="true">
+    <button class="appearance-card theme-swatch ${option.id === activePreference ? 'active' : ''}" data-focusable
+            data-appearance-id="${option.id}" data-theme-id="${option.id}" data-theme="${option.id}"
+            role="radio" aria-checked="${option.id === activePreference ? 'true' : 'false'}"
+            aria-label="${t(option.nameKey as any)}: ${t(option.descKey as any)}">
+      <span class="appearance-card-preview theme-swatch-preview ${isSplit ? 'is-system' : ''}" aria-hidden="true" data-theme="${previewTheme}">
         <span class="tsp-tabs">
           <span class="tsp-tab active">${t('nav.live')}</span>
           <span class="tsp-tab">${t('nav.movies')}</span>
@@ -165,7 +179,10 @@ function themeSwatch(theme: ThemeMeta, activeId: string): Safe {
           </span>
         </span>
       </span>
-      <span class="theme-swatch-name">${theme.name}</span>
+      <span class="appearance-card-content">
+        <span class="appearance-card-title theme-swatch-name">${t(option.nameKey as any)}</span>
+        <span class="appearance-card-desc">${t(option.descKey as any)}</span>
+      </span>
     </button>`;
 }
 
@@ -501,9 +518,16 @@ export class Settings {
   // The control Settings came back to, until its first reveal.
   private landedKey: string | null = null;
   private currentRow: Element | null = null;
-  // Pending theme selection (persisted on Save; live-previewed while browsing).
-  private selectedTheme = '';
+  // Pending appearance selection (persisted on Save; live-previewed while browsing).
+  private selectedAppearance: AppearancePreference = 'system';
   private themeHoverToken = 0;
+
+  get selectedTheme(): string {
+    return this.selectedAppearance;
+  }
+  set selectedTheme(val: string) {
+    this.selectedAppearance = isValidAppearancePreference(val) ? val : 'system';
+  }
   private epgOffsets: Record<string, number> = {};
   private storedEpgOffsets: Record<string, number> = {};
   private confirmationPrompt = new ConfirmationPrompt('prompt.settings');
@@ -739,8 +763,8 @@ export class Settings {
     const feedTime = StorageService.getTzMode() === 'feed';
     const tzOffset = StorageService.getEpgTzOffset();
     const os = StorageService.getOnlineSubtitleConfig();
-    const theme = StorageService.getTheme();
-    this.selectedTheme = theme;
+    const appearance = StorageService.getAppearancePreference();
+    this.selectedAppearance = appearance;
     const overlayStyle = StorageService.getOverlayStyle();
     const textSize = StorageService.getTextSize();
     const localePreference = StorageService.getLocalePreference();
@@ -953,10 +977,11 @@ export class Settings {
             <div class="settings-category" id="settings-appearance" data-settings-category="appearance">
               <div class="settings-section">
                 <h3 class="settings-section-title">${t('settings.appearance')}</h3>
-                <div class="settings-item">
-                  <div class="settings-item-title">${t('settings.theme')}</div>
-                  <div class="theme-swatch-grid">
-                    ${THEMES.map(t => themeSwatch(t, theme))}
+                <div class="settings-item settings-item--appearance">
+                  <div class="settings-item-title">${t('settings.appearance')}</div>
+                  <div class="settings-item-hint">${t('settings.appearanceDesc')}</div>
+                  <div class="appearance-cards-grid theme-swatch-grid" role="radiogroup" aria-label="${t('settings.appearance')}">
+                    ${APPEARANCE_OPTIONS.map(opt => appearanceCard(opt, this.selectedAppearance))}
                   </div>
                 </div>
                 <div class="settings-item">
@@ -1861,14 +1886,15 @@ export class Settings {
   private restoreThemeAfterHover(): void {
     const token = ++this.themeHoverToken;
     void Promise.resolve().then(() => {
-      if (token === this.themeHoverToken) previewTheme(this.selectedTheme);
+      if (token === this.themeHoverToken) previewAppearance(this.selectedAppearance);
     });
   }
 
   private onNavFocus(el: HTMLElement | null): void {
     this.themeHoverToken++;
-    if (el?.dataset.themeId) previewTheme(el.dataset.themeId);
-    else previewTheme(this.selectedTheme);
+    const id = el?.dataset.appearanceId || el?.dataset.themeId;
+    if (id && isValidAppearancePreference(id)) previewAppearance(id);
+    else previewAppearance(this.selectedAppearance);
     if (!el) return;
     const key = this.keyOf(el);
     if (key !== this.landedKey) this.landedKey = null;
@@ -2143,7 +2169,7 @@ export class Settings {
   private leftPeer(el: HTMLElement | null): HTMLElement | null {
     if (!el) return null;
     const group = el.closest<HTMLElement>(
-      '.toggle-group, .theme-swatch-grid, .settings-row, .xtream-fields, .xtream-card-foot, .settings-actions, .epg-offset-controls',
+      '.toggle-group, .appearance-cards-grid, .theme-swatch-grid, .settings-row, .xtream-fields, .xtream-card-foot, .settings-actions, .epg-offset-controls',
     );
     if (!group) return null;
     const rect = el.getBoundingClientRect();
@@ -2216,12 +2242,16 @@ export class Settings {
   // OK on a swatch: mark it the pending selection (persisted on Save & Apply;
   // reverted to savedTheme if Settings closes without saving — see App.showView).
   private selectThemeSwatch(el: HTMLElement): void {
-    const id = el.dataset.themeId;
-    if (!id) return;
-    this.container.querySelectorAll('.theme-swatch').forEach(s => s.classList.remove('active'));
+    const id = el.dataset.appearanceId || el.dataset.themeId;
+    if (!id || !isValidAppearancePreference(id)) return;
+    this.container.querySelectorAll('.theme-swatch').forEach(s => {
+      s.classList.remove('active');
+      s.setAttribute('aria-checked', 'false');
+    });
     el.classList.add('active');
-    this.selectedTheme = id;
-    previewTheme(id);
+    el.setAttribute('aria-checked', 'true');
+    this.selectedAppearance = id;
+    previewAppearance(id);
   }
 
   // Opening moves focus to the active option, or the first one when the stored
@@ -2892,7 +2922,7 @@ export class Settings {
     this.epgOffsets = nextEpgOffsets;
     StorageService.setEpgOffsets(nextEpgOffsets);
 
-    StorageService.setTheme(this.selectedTheme);
+    StorageService.setAppearancePreference(this.selectedAppearance);
 
     const overlayBtn = $('#overlay-style .toggle-option.active', this.container);
     if (overlayBtn?.dataset.value) StorageService.setOverlayStyle(overlayBtn.dataset.value as OverlayStyle);

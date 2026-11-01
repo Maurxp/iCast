@@ -203,6 +203,10 @@
   background: var(--accent);
 }
 
+[data-theme="porcelain"] .search-program-row.state-live .search-program-action {
+  color: var(--text-primary);
+}
+
 /* Recent searches: a translucent panel hung from the tab bar's empty search
    box over a dimmed view. The scrim stops below the bar, which stays live.
    Margins instead of flex `gap` so wrapped rows keep their spacing on

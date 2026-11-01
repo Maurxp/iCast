@@ -358,10 +358,19 @@ describe('StorageService', () => {
     expect(StorageService.getEpgOffsets()).toEqual({});
   });
 
-  it('defaults the theme to obsidian and round-trips a selection', () => {
+  it('defaults the appearance to system/obsidian and round-trips a selection', () => {
+    expect(StorageService.getAppearancePreference()).toBe('system');
     expect(StorageService.getTheme()).toBe('obsidian');
+    StorageService.setAppearancePreference('porcelain');
+    expect(StorageService.getAppearancePreference()).toBe('porcelain');
+    expect(StorageService.getTheme()).toBe('porcelain');
+    StorageService.setTheme('obsidian');
+    expect(StorageService.getAppearancePreference()).toBe('obsidian');
+    expect(StorageService.getTheme()).toBe('obsidian');
+    // Legacy theme migration
     StorageService.setTheme('arctic');
-    expect(StorageService.getTheme()).toBe('arctic');
+    expect(StorageService.getAppearancePreference()).toBe('system');
+    expect(StorageService.getTheme()).toBe('obsidian');
   });
 
   it('defaults the overlay style to dark and round-trips a selection', () => {

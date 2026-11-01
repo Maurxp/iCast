@@ -34,7 +34,8 @@ const {
     autoPlay: false,
     livePreview: false,
     animationMode: 'reduced' as AnimationMode,
-    theme: 'midnight' as string,
+    theme: 'obsidian' as string,
+  appearancePreference: 'system' as string,
     overlayStyle: 'dark' as string,
     textSize: '100' as string,
     tzMode: 'device' as TzMode,
@@ -75,11 +76,13 @@ const {
         quotaBytes: null,
       })),
     },
-    themeMock: { previewTheme: vi.fn(), applyTheme: vi.fn(), initTheme: vi.fn(), applyTextSize: vi.fn()     },
+    themeMock: { previewAppearance: vi.fn(), previewTheme: vi.fn(), applyTheme: vi.fn(), initTheme: vi.fn(), applyTextSize: vi.fn() },
     motionMock: {
       applyAnimationMode: vi.fn(),
     },
     storageMock: {
+      getAppearancePreference: vi.fn(() => state.appearancePreference),
+      setAppearancePreference: vi.fn((pref: string) => { state.appearancePreference = pref; state.theme = pref; }),
       getPlaylists: vi.fn(() => state.playlists),
       getManualEpgSources: vi.fn(() => state.manualEpgSources.map(source => ({
         ...source,
@@ -256,7 +259,8 @@ beforeEach(() => {
   state.autoPlay = false;
   state.livePreview = false;
   state.animationMode = 'reduced';
-  state.theme = 'midnight';
+  state.theme = 'obsidian';
+  state.appearancePreference = 'system';
   state.overlayStyle = 'dark';
   state.textSize = '100';
   state.liveReconnectAttempts = 3;
@@ -953,56 +957,54 @@ describe('Settings theme picker', () => {
   beforeEach(() => settings.render());
 
   it('renders a swatch per registered theme with the saved theme active', () => {
-    expect(container.querySelectorAll('.theme-swatch')).toHaveLength(17);
-    expect(container.querySelector('.theme-swatch.active')!.getAttribute('data-theme-id')).toBe('midnight');
+    expect(container.querySelectorAll('.theme-swatch')).toHaveLength(3);
+    expect(container.querySelectorAll('.appearance-card')).toHaveLength(3);
+    expect(container.querySelector('.theme-swatch.active')!.getAttribute('data-theme-id')).toBe('system');
   });
 
   it('marks the saved theme active on open', () => {
-    state.theme = 'plum-night';
+    state.appearancePreference = 'porcelain';
     settings.render();
     const active = container.querySelectorAll('.theme-swatch.active');
     expect(active).toHaveLength(1);
-    expect(active[0].getAttribute('data-theme-id')).toBe('plum-night');
+    expect(active[0].getAttribute('data-theme-id')).toBe('porcelain');
   });
 
   it('selecting a swatch previews it and moves the active marker', () => {
-    click('.theme-swatch[data-theme-id="arctic"]');
-    expect(themeMock.previewTheme).toHaveBeenCalledWith('arctic');
+    click('.theme-swatch[data-theme-id="porcelain"]');
+    expect(themeMock.previewAppearance).toHaveBeenCalledWith('porcelain');
     const active = container.querySelectorAll('.theme-swatch.active');
     expect(active).toHaveLength(1);
-    expect(active[0].getAttribute('data-theme-id')).toBe('arctic');
+    expect(active[0].getAttribute('data-theme-id')).toBe('porcelain');
   });
 
   it('previews on pointer hover and restores the selected theme when the pointer leaves', async () => {
-    // Select Arctic (pending), then hover a different swatch and move the pointer off.
-    click('.theme-swatch[data-theme-id="arctic"]');
-    const amber = container.querySelector<HTMLElement>('.theme-swatch[data-theme-id="vintage-amber"]')!;
-    amber.dispatchEvent(new CustomEvent('nav:hover', { bubbles: true }));
-    expect(themeMock.previewTheme).toHaveBeenLastCalledWith('vintage-amber');
-    // Leaving to a non-swatch restores the selected (Arctic), not the saved (midnight).
-    amber.dispatchEvent(new CustomEvent('nav:unhover', { bubbles: true }));
+    click('.theme-swatch[data-theme-id="porcelain"]');
+    const obsidian = container.querySelector<HTMLElement>('.theme-swatch[data-theme-id="obsidian"]')!;
+    obsidian.dispatchEvent(new CustomEvent('nav:hover', { bubbles: true }));
+    expect(themeMock.previewAppearance).toHaveBeenLastCalledWith('obsidian');
+    // Leaving to a non-swatch restores the selected (Porcelain), not the saved (system).
+    obsidian.dispatchEvent(new CustomEvent('nav:unhover', { bubbles: true }));
     await Promise.resolve();
-    expect(themeMock.previewTheme).toHaveBeenLastCalledWith('arctic');
+    expect(themeMock.previewAppearance).toHaveBeenLastCalledWith('porcelain');
   });
 
   it('keeps previewing when the pointer moves between swatches', async () => {
-    const arctic = container.querySelector<HTMLElement>('.theme-swatch[data-theme-id="arctic"]')!;
-    const amber = container.querySelector<HTMLElement>('.theme-swatch[data-theme-id="vintage-amber"]')!;
-    arctic.dispatchEvent(new CustomEvent('nav:hover', { bubbles: true }));
-    themeMock.previewTheme.mockClear();
-    arctic.dispatchEvent(new CustomEvent('nav:unhover', { bubbles: true }));
-    amber.dispatchEvent(new CustomEvent('nav:hover', { bubbles: true }));
+    const porcelain = container.querySelector<HTMLElement>('.theme-swatch[data-theme-id="porcelain"]')!;
+    const obsidian = container.querySelector<HTMLElement>('.theme-swatch[data-theme-id="obsidian"]')!;
+    porcelain.dispatchEvent(new CustomEvent('nav:hover', { bubbles: true }));
+    themeMock.previewAppearance.mockClear();
+    porcelain.dispatchEvent(new CustomEvent('nav:unhover', { bubbles: true }));
+    obsidian.dispatchEvent(new CustomEvent('nav:hover', { bubbles: true }));
     await Promise.resolve();
-    // Each theme change restyles the whole document, so swatch→swatch must
-    // not restore the selected theme in between.
-    expect(themeMock.previewTheme.mock.calls).toEqual([['vintage-amber']]);
+    expect(themeMock.previewAppearance.mock.calls).toEqual([['obsidian']]);
   });
 
   it('persists the selected theme only on Save & Apply', () => {
-    click('.theme-swatch[data-theme-id="vintage-amber"]');
-    expect(storageMock.setTheme).not.toHaveBeenCalled();
+    click('.theme-swatch[data-theme-id="porcelain"]');
+    expect(storageMock.setAppearancePreference).not.toHaveBeenCalled();
     click('#save-settings');
-    expect(storageMock.setTheme).toHaveBeenCalledWith('vintage-amber');
+    expect(storageMock.setAppearancePreference).toHaveBeenCalledWith('porcelain');
   });
 
   it('reflects the saved overlay style on the toggle', () => {
@@ -1014,7 +1016,7 @@ describe('Settings theme picker', () => {
   it('labels the theme swatches as a child setting', () => {
     settings.render();
     expect(container.querySelector('#settings-appearance .settings-item-title')?.textContent)
-      .toBe('Theme');
+      .toBe('Appearance');
   });
 
   it('renders preferred subtitles as a child setting', () => {
@@ -1773,7 +1775,7 @@ describe('Settings.handleAction', () => {
   it('does not preview the hovered swatch when Settings gives the keys away from a field', () => {
     settings.render();
     const field = container.querySelector<HTMLInputElement>('#subdl-key')!;
-    const swatch = container.querySelector<HTMLElement>('.theme-swatch[data-theme-id="arctic"]')!;
+    const swatch = container.querySelector<HTMLElement>('.theme-swatch[data-theme-id="porcelain"]')!;
     hover(field);
     settings.handleAction('select');
     const before = settings.focusScope.focusKey;
@@ -1783,7 +1785,7 @@ describe('Settings.handleAction', () => {
     Focus.push(elsewhere);
     Focus.flush();
     expect(document.activeElement).not.toBe(field);
-    expect(themeMock.previewTheme).not.toHaveBeenCalledWith('arctic');
+    expect(themeMock.previewAppearance).not.toHaveBeenCalledWith('porcelain');
     expect(settings.focusScope.focusKey).toBe(before);
     Focus.pop(elsewhere);
   });

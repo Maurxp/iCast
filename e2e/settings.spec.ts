@@ -682,7 +682,7 @@ test.describe('Settings navigation', () => {
     }
   });
 
-  test('lays out the 17 theme swatches across four rows', async ({ page }) => {
+  test('lays out the 3 appearance option cards across one row', async ({ page }) => {
     await page.goto('/');
     await page.locator('[data-settings-target="appearance"]').click();
 
@@ -695,7 +695,7 @@ test.describe('Settings navigation', () => {
       return Array.from(rows.values());
     });
 
-    expect(rowCounts).toEqual([5, 5, 5, 2]);
+    expect(rowCounts).toEqual([3]);
   });
 
   test('the text size picker scales only fonts and persists', async ({ page }) => {

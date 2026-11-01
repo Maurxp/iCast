@@ -75,7 +75,6 @@ html.q-scroll-end-padding .catalog-category-rail::after { content: none; }
   .player-sidebar { background: rgb(20, 20, 35); }
   .player-menu,
   .player-osd,
-  .number-entry,
   .live-preview-message { background: rgb(10, 10, 15); }
   .search-history-panel { background: var(--bg-secondary); }
 }
@@ -114,24 +113,31 @@ html.q-scroll-end-padding .catalog-category-rail::after { content: none; }
     min-width: 0;
   }
 
-  /* Theme picker: swatch tiles wrap into a grid instead of a vertical stack.
-     Grid puts the 18px gap only *between* tiles, so carry it on one side and
+  /* Appearance cards / theme picker: 3 option cards wrap into a grid instead of a vertical stack.
+     Grid puts the 20px gap only *between* cards, so carry it on one side and
      pull the trailing row's back off. */
+  .appearance-cards-grid,
   .theme-swatch-grid {
     display: -webkit-flex;
     display: flex;
     -webkit-flex-wrap: wrap;
     flex-wrap: wrap;
-    margin-bottom: -18px;
+    margin-bottom: -20px;
   }
+  .appearance-cards-grid > .appearance-card,
+  .appearance-cards-grid > .theme-swatch,
+  .theme-swatch-grid > .appearance-card,
   .theme-swatch-grid > .theme-swatch {
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
-    -webkit-flex: 0 0 calc((100% - 72px) / 5);
-    flex: 0 0 calc((100% - 72px) / 5);
-    margin: 0 18px 18px 0;
+    -webkit-flex: 0 0 calc((100% - 40px) / 3);
+    flex: 0 0 calc((100% - 40px) / 3);
+    margin: 0 20px 20px 0;
   }
-  .theme-swatch-grid > .theme-swatch:nth-child(5n) {
+  .appearance-cards-grid > .appearance-card:nth-child(3n),
+  .appearance-cards-grid > .theme-swatch:nth-child(3n),
+  .theme-swatch-grid > .appearance-card:nth-child(3n),
+  .theme-swatch-grid > .theme-swatch:nth-child(3n) {
     margin-right: 0;
   }
 

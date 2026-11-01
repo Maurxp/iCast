@@ -523,9 +523,18 @@
   border-top-color: transparent;
 }
 
+[data-theme="porcelain"] .epg-date-item.selected {
+  color: var(--text-primary);
+}
+
 .epg-date-item.selected .epg-date-weekday {
   color: #fff;
   opacity: 0.85;
+}
+
+[data-theme="porcelain"] .epg-date-item.selected .epg-date-weekday {
+  color: var(--text-primary);
+  opacity: 1;
 }
 
 .epg-date-item.focused {

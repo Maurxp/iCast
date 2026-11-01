@@ -1,38 +1,50 @@
-// Theme registry — metadata only. The color values live in `css/themes.css`
-// as `[data-theme="<id>"]` blocks (single source of truth); the Settings swatch
-// grid reads them back through each tile's own `data-theme`.
+// Appearance architecture — Two official modes: Obsidian (dark) and Porcelain (light).
+// Theme values live in `css/themes.css` as `[data-theme="<id>"]` blocks
+// (single source of truth).
+
+export type AppearancePreference = 'system' | 'obsidian' | 'porcelain';
+export const APPEARANCE_PREFERENCES: readonly AppearancePreference[] = ['system', 'obsidian', 'porcelain'] as const;
+export const DEFAULT_APPEARANCE_PREFERENCE: AppearancePreference = 'system';
+
+export type ResolvedAppearance = 'obsidian' | 'porcelain';
+export const DEFAULT_RESOLVED_APPEARANCE: ResolvedAppearance = 'obsidian';
+export const DEFAULT_THEME: ResolvedAppearance = 'obsidian';
 
 export interface ThemeMeta {
-  id: string;
+  id: ResolvedAppearance;
   name: string;
   isLight: boolean;
 }
 
-export const DEFAULT_THEME = 'obsidian';
+export interface AppearanceOption {
+  id: AppearancePreference;
+  nameKey: string;
+  descKey: string;
+  previewClass: string;
+}
 
-// Display order in the picker.
-export const THEMES: ThemeMeta[] = [
-  { id: 'obsidian', name: 'Obsidian (iCast)', isLight: false },
-  { id: 'porcelain', name: 'Porcelain (iCast)', isLight: true },
-  { id: 'midnight', name: 'Midnight', isLight: false },
-  { id: 'ember', name: 'Ember', isLight: false },
-  { id: 'emerald', name: 'Emerald', isLight: false },
-  { id: 'amethyst', name: 'Amethyst', isLight: false },
-  { id: 'daylight', name: 'Daylight', isLight: true },
-  { id: 'plum-night', name: 'Plum Night', isLight: false },
-  { id: 'arctic', name: 'Arctic', isLight: false },
-  { id: 'ocean-dark', name: 'Ocean Dark', isLight: false },
-  { id: 'vintage-amber', name: 'Vintage Amber', isLight: false },
-  { id: 'pastel-mocha', name: 'Pastel Mocha', isLight: false },
-  { id: 'neon-night', name: 'Neon Night', isLight: false },
-  { id: 'pastel-latte', name: 'Pastel Latte', isLight: true },
-  { id: 'paper-light', name: 'Paper Light', isLight: true },
-  { id: 'burgundy', name: 'Burgundy', isLight: false },
-  { id: 'cobalt-slate', name: 'Cobalt Slate', isLight: false },
+export const APPEARANCE_OPTIONS: AppearanceOption[] = [
+  { id: 'system', nameKey: 'settings.appearanceAuto', descKey: 'settings.appearanceAutoDesc', previewClass: 'auto' },
+  { id: 'obsidian', nameKey: 'settings.appearanceObsidian', descKey: 'settings.appearanceObsidianDesc', previewClass: 'obsidian' },
+  { id: 'porcelain', nameKey: 'settings.appearancePorcelain', descKey: 'settings.appearancePorcelainDesc', previewClass: 'porcelain' },
 ];
 
-export function isValidTheme(id: string | null | undefined): id is string {
-  return !!id && THEMES.some(t => t.id === id);
+// The two official appearances of iCast
+export const THEMES: ThemeMeta[] = [
+  { id: 'obsidian', name: 'Obsidian', isLight: false },
+  { id: 'porcelain', name: 'Porcelain', isLight: true },
+];
+
+export function isValidTheme(id: string | null | undefined): id is ResolvedAppearance {
+  return id === 'obsidian' || id === 'porcelain';
+}
+
+export function isValidAppearancePreference(v: unknown): v is AppearancePreference {
+  return v === 'system' || v === 'obsidian' || v === 'porcelain';
+}
+
+export function isValidResolvedAppearance(v: unknown): v is ResolvedAppearance {
+  return v === 'obsidian' || v === 'porcelain';
 }
 
 // Player overlay glass style (OSD / sidebar / menu). 'dark' = dark-glass on every

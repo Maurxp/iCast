@@ -271,7 +271,7 @@ for (const section of ['movies', 'series'] as const) {
     // Movies also covers a light theme at the largest text size.
     if (section === 'movies') {
       await page.addInitScript(() => {
-        localStorage.setItem('iptv_theme', JSON.stringify('paper-light'));
+        localStorage.setItem('iptv_theme', JSON.stringify('porcelain'));
         localStorage.setItem('iptv_text_size', JSON.stringify('150'));
       });
     }
@@ -296,7 +296,7 @@ for (const section of ['movies', 'series'] as const) {
     await expectSteadyRate(page, resume);
     await expect.poll(() => left(resume), { timeout: 10_000 }).toBeGreaterThan(400);
     await page.screenshot({ path: testInfo.outputPath(
-      section === 'movies' ? 'movies-paper-light-150-edge-scroll.png' : 'series-edge-scroll.png') });
+      section === 'movies' ? 'movies-porcelain-150-edge-scroll.png' : 'series-edge-scroll.png') });
     expect(await left(watchlist), 'only the pointed rail scrolls').toBe(0);
 
     // Reverse: through the middle (stop) into the left edge.

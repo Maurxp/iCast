@@ -255,7 +255,7 @@ test('dark player overlay keeps sidebar scrollbar dark on a light theme', async 
   await routePlaylist(page, SEARCH_M3U);
   await seedPlaylist(page);
   await page.addInitScript(() => {
-    localStorage.setItem('iptv_theme', JSON.stringify('daylight'));
+    localStorage.setItem('iptv_theme', JSON.stringify('porcelain'));
     localStorage.setItem('iptv_overlay_style', JSON.stringify('dark'));
   });
   await page.goto('/');

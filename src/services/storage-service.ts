@@ -1,5 +1,5 @@
 import { CONFIG } from '../config';
-import { DEFAULT_THEME, DEFAULT_OVERLAY, DEFAULT_TEXT_SIZE, isValidTextSize, type OverlayStyle, type TextSize } from '../config/themes';
+import { DEFAULT_THEME, DEFAULT_OVERLAY, DEFAULT_TEXT_SIZE, DEFAULT_APPEARANCE_PREFERENCE, isValidAppearancePreference, isValidTextSize, type AppearancePreference, type OverlayStyle, type TextSize } from '../config/themes';
 import type { AudioPref, CatchupProgressEntry, Channel, ChannelCustomization, ChannelCycleMode, ManualEpgSource, ParentalControlConfig, ParentalPinThrottle, PlaylistEntry, RecentlyWatchedLiveEntry, Reminder, ResumeEntry, ResumeKind, SubtitlePref, TzMode, WatchlistEntry, WatchlistKind, XtreamLiveCategorySnapshot } from '../types';
 import type { OnlineSubtitleConfig, PickedOnlineSub } from './subtitle-search/types';
 import { channelKey, legacyChannelKey } from '../utils/channel';
@@ -1084,12 +1084,44 @@ export const StorageService = {
     set('locale', locale);
   },
 
-  // Selected color theme id (see src/config/themes.ts). Default = Midnight.
+  // Appearance preference ('system' | 'obsidian' | 'porcelain'). Default = 'system'.
+  getAppearancePreference(): AppearancePreference {
+    const rawPref = get<unknown>('appearance_preference', null);
+    if (isValidAppearancePreference(rawPref)) {
+      return rawPref;
+    }
+    // Migration: check legacy 'theme' key
+    const rawLegacy = get<unknown>('theme', null);
+    if (rawLegacy === 'porcelain') return 'porcelain';
+    if (rawLegacy === 'obsidian') return 'obsidian';
+    // If not set or any legacy theme ('midnight', etc.), default to 'system'
+    return DEFAULT_APPEARANCE_PREFERENCE;
+  },
+  setAppearancePreference(pref: AppearancePreference): void {
+    if (isValidAppearancePreference(pref)) {
+      set('appearance_preference', pref);
+      // Keep legacy 'theme' key in sync with resolved preference for backwards compatibility
+      set('theme', pref);
+    }
+  },
+
+  // Resolved theme id for backward compatibility (see src/config/themes.ts).
   getTheme(): string {
-    return get<string>('theme', DEFAULT_THEME);
+    const pref = this.getAppearancePreference();
+    if (pref === 'porcelain') return 'porcelain';
+    if (pref === 'obsidian') return 'obsidian';
+    // When preference is 'system', resolve based on window.matchMedia or fallback to 'obsidian'
+    if (typeof window !== 'undefined' && typeof window.matchMedia === 'function') {
+      try {
+        if (window.matchMedia('(prefers-color-scheme: light)').matches) return 'porcelain';
+      } catch (_e) {}
+    }
+    return DEFAULT_THEME;
   },
   setTheme(id: string): void {
-    set('theme', id);
+    if (id === 'porcelain') this.setAppearancePreference('porcelain');
+    else if (id === 'obsidian') this.setAppearancePreference('obsidian');
+    else this.setAppearancePreference('system');
   },
 
   // App-wide text size (see src/config/themes.ts). Default = default (100%).

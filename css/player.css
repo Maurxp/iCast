@@ -435,6 +435,10 @@
   color: #fff;
 }
 
+[data-theme="porcelain"] .osd-next-episode-actions button:first-child {
+  color: var(--text-primary);
+}
+
 /* Player sidebar overlay (Magic Remote / left key) */
 .player-sidebar {
   position: absolute;

@@ -928,6 +928,10 @@
   z-index: 1; /* lift the accent border above the neighboring option */
 }
 
+[data-theme="porcelain"] .toggle-option.active {
+  color: var(--text-primary);
+}
+
 .source-toggle {
   display: inline-flex;
   min-width: 150px;
@@ -1042,14 +1046,17 @@
 /* Theme picker: focusable swatch tiles. Each tile carries its own data-theme, so
    its mini app-mock (tab bar, focused channel tile, list rows, status dots) and
    its own surfaces/text render in that theme's colors. */
+.appearance-cards-grid,
 .theme-swatch-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 18px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
 }
 
+.appearance-card,
 .theme-swatch {
-  display: block;
+  display: flex;
+  flex-direction: column;
   padding: 0;
   overflow: hidden;
   text-align: left;
@@ -1064,6 +1071,10 @@
   display: block;
   padding: 14px;
   color: var(--text-primary);
+}
+
+.theme-swatch-preview.is-system {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.04) 50%, rgba(0, 0, 0, 0.2) 50%);
 }
 
 .tsp-tabs {
@@ -1160,10 +1171,17 @@
 .tsp-dot.su { background: var(--success); }
 .tsp-dot.wa { background: var(--warning); }
 
-.theme-swatch-name {
-  display: block;
-  padding: 10px 14px;
+.appearance-card-content {
+  display: flex;
+  flex-direction: column;
+  padding: 12px 14px;
   background: var(--bg-secondary);
+  border-top: 1px solid var(--border);
+}
+
+.theme-swatch-name,
+.appearance-card-title {
+  display: block;
   color: var(--text-primary);
   font-size: 20px;
   font-weight: 700;
@@ -1172,14 +1190,34 @@
   white-space: nowrap;
 }
 
+.appearance-card-desc {
+  display: block;
+  color: var(--text-secondary);
+  font-size: 14px;
+  margin-top: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.appearance-card.active,
 .theme-swatch.active {
   border-color: var(--accent);
 }
 
+.appearance-card.active .theme-swatch-name,
+.appearance-card.active .appearance-card-title,
 .theme-swatch.active .theme-swatch-name {
   color: var(--accent);
 }
 
+[data-theme="porcelain"] .appearance-card.active .theme-swatch-name,
+[data-theme="porcelain"] .appearance-card.active .appearance-card-title,
+[data-theme="porcelain"] .theme-swatch.active .theme-swatch-name {
+  color: var(--accent-text);
+}
+
+.appearance-card.focused,
 .theme-swatch.focused {
   border-color: var(--focus-ring);
   box-shadow: 0 0 0 3px var(--accent-glow), 0 0 16px var(--accent-glow);

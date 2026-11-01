@@ -413,6 +413,10 @@
   background: var(--accent);
 }
 
+[data-theme="porcelain"] .favorite-selected .favorite-checkbox {
+  color: var(--text-primary);
+}
+
 .favorite-checkbox svg {
   width: 20px;
   height: 20px;
