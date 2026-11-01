@@ -130,7 +130,7 @@ var state = {
 
 startServer(0, dataDir).then(function (bound) {
   server = bound.server;
-  return request(bound.port, 'GET', '/info').then(function (response) {
+  return request(bound.port, 'GET', '/info?token=' + encodeURIComponent(bound.appToken)).then(function (response) {
     var info = expectStatus(response, 200, '/info');
     return request(
       bound.port,
@@ -142,7 +142,7 @@ startServer(0, dataDir).then(function (bound) {
       return request(
         bound.port,
         'PUT',
-        '/setup-state',
+        '/setup-state?token=' + encodeURIComponent(bound.appToken),
         JSON.stringify(state)
       ).then(function (stateResponse) {
         expectStatus(stateResponse, 200, 'PUT /setup-state');
@@ -168,7 +168,7 @@ startServer(0, dataDir).then(function (bound) {
         );
       }).then(function (actionResponse) {
         var action = expectStatus(actionResponse, 201, 'POST /setup-actions');
-        return request(bound.port, 'GET', '/setup-actions').then(function (listResponse) {
+        return request(bound.port, 'GET', '/setup-actions?token=' + encodeURIComponent(bound.appToken)).then(function (listResponse) {
           var actions = expectStatus(listResponse, 200, 'GET /setup-actions');
           if (actions.length !== 1 || actions[0].id !== action.id) {
             throw new Error('Setup action queue failed');
@@ -176,7 +176,7 @@ startServer(0, dataDir).then(function (bound) {
           return request(
             bound.port,
             'DELETE',
-            '/setup-actions/' + action.id
+            '/setup-actions/' + action.id + '?token=' + encodeURIComponent(bound.appToken)
           );
         });
       }).then(function (deleteResponse) {
@@ -192,12 +192,12 @@ startServer(0, dataDir).then(function (bound) {
           if (upload.id !== 'alpha' || upload.count !== 1) {
             throw new Error('Upload metadata validation failed');
           }
-          return request(bound.port, 'GET', '/uploads').then(function (listResponse) {
+          return request(bound.port, 'GET', '/uploads?token=' + encodeURIComponent(token)).then(function (listResponse) {
             var uploads = expectStatus(listResponse, 200, 'GET /uploads');
             if (uploads.length !== 1 || uploads[0].id !== 'alpha') {
               throw new Error('Upload listing failed');
             }
-            return request(bound.port, 'GET', '/uploads/alpha.m3u');
+            return request(bound.port, 'GET', '/uploads/alpha.m3u?token=' + encodeURIComponent(token));
           }).then(function (readResponse) {
             if (readResponse.status !== 200 || readResponse.body !== playlist) {
               throw new Error('Upload readback failed');
